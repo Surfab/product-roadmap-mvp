@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Product Roadmap MVP</title>
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.45);
+      --stroke:rgba(255,255,255,.14);
+      --stroke2:rgba(255,255,255,.24);
+      --shadow:0 12px 40px rgba(0,0,0,.35);
+      --shadow2:0 10px 24px rgba(0,0,0,.28);
+      --radius:16px;
+      --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:
+        radial-gradient(1200px 700px at 20% 5%, rgba(121,110,255,.18), transparent 65%),
+        radial-gradient(900px 600px at 90% 10%, rgba(110,255,210,.10), transparent 60%),
+        radial-gradient(1200px 900px at 50% 120%, rgba(255,160,110,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .app{max-width:1240px;margin:28px auto;padding:0 18px 26px}
+
+    .topbar{
+      display:flex;align-items:center;gap:12px;
+      padding:14px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      position:sticky;top:12px;z-index:20;
+      flex-wrap:wrap;
+    }
+    .titleWrap{
+      display:flex;flex-direction:column;gap:2px;
+      min-width:240px;max-width:440px;
+      flex:1 1 340px;
+    }
+    .title{display:flex;align-items:center;gap:10px}
+    .title input{
+      width:100%;
+      border:none;outline:none;background:transparent;
+      color:var(--text);
+      font-weight:650;font-size:16px;letter-spacing:.2px;
+      padding:6px 8px;border-radius:10px;
+      transition:background .18s ease, box-shadow .18s ease;
+    }
+    .title input:focus{
+      background:rgba(255,255,255,.07);
+      box-shadow:0 0 0 3px rgba(255,255,255,.08) inset;
+    }
+    .subtitle{padding-left:8px;color:var(--muted);font-size:12px}
+
+    .controls{
+      display:flex;align-items:center;gap:10px;
+      flex-wrap:wrap;justify-content:flex-end;
+      flex:2 1 620px;
+    }
+
+    .segmented{
+      display:flex;align-items:center;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      border-radius:999px;
+      padding:3px;
+      box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
+      overflow:hidden;
+    }
+    .segmented button{
+      border:none;background:transparent;color:var(--muted);
+      padding:8px 12px;border-radius:999px;
+      cursor:pointer;font-size:13px;
+      transition:background .18s ease, color .18s ease, transform .12s ease;
+      white-space:nowrap;
+    }
+    .segmented button:hover{color:var(--text)}
+    .segmented button:active{transform:scale(.98)}
+    .segmented button.active{background:rgba(255,255,255,.12);color:var(--text)}
+
+    .select{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:9px 10px;border-radius:12px;
+      font-size:13px;outline:none;cursor:pointer;
+      transition:background .18s ease, border-color .18s ease;
+    }
+    .select:hover{background:rgba(255,255,255,.08);border-color:var(--stroke2)}
+
+    .field{
+      display:flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      transition:border-color .18s ease, background .18s ease;
+    }
+    .field:focus-within{border-color:var(--stroke2);background:rgba(255,255,255,.07)}
+    .field svg{opacity:.75}
+    .field input{
+      border:none;outline:none;background:transparent;
+      color:var(--text);font-size:13px;width:210px;
+    }
+    .field input::placeholder{color:var(--muted2)}
+
+    .btn{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:9px 12px;border-radius:12px;
+      cursor:pointer;font-size:13px;
+      transition:transform .12s ease, background .18s ease, border-color .18s ease;
+      display:flex;align-items:center;gap:8px;
+    }
+    .btn:hover{background:rgba(255,255,255,.08);border-color:var(--stroke2)}
+    .btn:active{transform:scale(.98)}
+    .btn.primary{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.20)}
+
+    /* Tag bar */
+    .tagBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:860px}
+    .chip{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      padding:7px 10px;border-radius:999px;
+      cursor:pointer;font-size:12px;
+      transition:background .18s ease,border-color .18s ease,transform .12s ease,color .18s ease;
+      user-select:none;white-space:nowrap;
+      display:flex;align-items:center;gap:8px;
+    }
+    .chip:hover{background:rgba(255,255,255,.08);border-color:var(--stroke2);color:var(--text)}
+    .chip:active{transform:scale(.98)}
+    .chip.active{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22);color:var(--text)}
+    .chip .count{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      padding:2px 7px;border-radius:999px;
+      font-size:11px;line-height:1;
+    }
+    .chip.active .count{color:var(--text);border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.08)}
+    .chip.clearX{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:var(--text)}
+    .chip.mode{border-color:rgba(255,255,255,.18)}
+    .chip.filterPill{
+      cursor:default;
+      border-color:rgba(255,255,255,.10);
+      background:rgba(255,255,255,.035);
+      color:rgba(255,255,255,.80);
+    }
+
+    /* Board */
+    .boardWrap{
+      margin-top:14px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.04);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+    .boardHeader{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 14px;border-bottom:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      flex-wrap:wrap;gap:10px;
+    }
+    .boardHeader .left{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;flex-wrap:wrap}
+    .pill{padding:4px 10px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--muted);font-size:12px}
+
+    .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));min-height:64vh}
+    .board.nnL{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .col{padding:12px;border-right:1px solid var(--stroke);transition:background .18s ease}
+    .col:last-child{border-right:none}
+    .col.dragover{background:rgba(255,255,255,.05)}
+    .colTitle{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 10px;font-size:13px;font-weight:650}
+    .colTitle span{color:var(--muted);font-weight:600;font-size:12px}
+    .dropzone{display:flex;flex-direction:column;gap:10px;padding:6px;min-height:calc(64vh - 56px);border-radius:12px}
+
+    /* Card */
+    .card{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      border-radius:14px;padding:10px;
+      cursor:grab;user-select:none;
+      transition:transform .12s ease,background .18s ease,border-color .18s ease;
+      box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
+    }
+    .card:hover{background:rgba(255,255,255,.085);border-color:var(--stroke2)}
+    .card:active{cursor:grabbing;transform:scale(.99)}
+    .card.dragging{opacity:.65;transform:rotate(-.2deg) scale(.99)}
+    .cardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
+    .cardTitle{font-weight:650;font-size:13px;line-height:1.25}
+    .cardDesc{color:var(--muted);font-size:12px;line-height:1.3;margin-top:2px;white-space:pre-wrap}
+    .metaRow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+    .badge,.tag{
+      font-size:11px;padding:4px 8px;border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+    }
+    .badge.status{color:var(--text)}
+    .iconBtn{
+      border:none;background:transparent;color:var(--muted);
+      cursor:pointer;padding:6px;border-radius:10px;
+      transition:background .18s ease,color .18s ease,transform .12s ease;
+    }
+    .iconBtn:hover{background:rgba(255,255,255,.06);color:var(--text)}
+    .iconBtn:active{transform:scale(.98)}
+    .empty{color:var(--muted);font-size:13px;padding:18px 14px}
+
+    /* Modal */
+    .modalOverlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.52);
+      display:none;align-items:center;justify-content:center;padding:20px;z-index:50;
+      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    }
+    .modal{
+      width:min(720px,100%);
+      border:1px solid var(--stroke);
+      background:rgba(20,22,28,.92);
+      border-radius:18px;overflow:hidden;
+      box-shadow:0 30px 80px rgba(0,0,0,.55);
+    }
+    .modalHead{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--stroke)}
+    .modalHead .h{font-weight:700;font-size:14px}
+    .modalBody{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modalBody .full{grid-column:1/-1}
+    .label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px}
+    .input,.textarea,.select2{
+      width:100%;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px;border-radius:12px;outline:none;font-size:13px;
+      transition:background .18s ease,border-color .18s ease;
+    }
+    .textarea{min-height:92px;resize:vertical}
+    .input:focus,.textarea:focus,.select2:focus{background:rgba(255,255,255,.07);border-color:var(--stroke2)}
+    .modalFoot{display:flex;align-items:center;justify-content:space-between;padding:14px;border-top:1px solid var(--stroke);gap:10px;flex-wrap:wrap}
+    .danger{border-color:rgba(255,120,120,.35);background:rgba(255,120,120,.12)}
+    .danger:hover{border-color:rgba(255,120,120,.55);background:rgba(255,120,120,.16)}
+
+    @media print{
+      body{background:#fff;color:#000}
+      .topbar,.boardHeader{display:none !important}
+      .boardWrap{border:none;box-shadow:none;background:transparent}
+      .col{border-color:#ddd}
+      .card{background:#f7f7f7 !important;color:#111 !important;border-color:#ddd !important;box-shadow:none !important}
+      .badge,.tag{border-color:#ddd !important;background:#fff !important;color:#333 !important}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="titleWrap">
+        <div class="title">
+          <input id="roadmapName" type="text" value="Roadmap" aria-label="Roadmap Name" />
+        </div>
+        <div id="subtitle" class="subtitle">
+          MVP, offline-first, con vista Quarter e Now/Next/Later, tag filter AND/OR
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="segmented" role="tablist" aria-label="Vista">
+          <button id="btnQuarter" class="active" type="button">Quarter</button>
+          <button id="btnNNL" type="button">Now / Next / Later</button>
+        </div>
+
+        <select id="yearSelect" class="select" title="Year"></select>
+
+        <div class="field" title="Cerca (Ctrl o Cmd + K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M16.3 16.3 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <input id="search" type="text" placeholder="Cerca item..." />
+        </div>
+
+        <div id="tagBar" class="tagBar" title="Filtra per tag"></div>
+
+        <button id="addBtn" class="btn primary" type="button"><span>+</span><span>New</span></button>
+        <button id="exportPngBtn" class="btn" type="button">Export PNG</button>
+        <button id="exportPdfBtn" class="btn" type="button">PDF</button>
+        <button id="exportJsonBtn" class="btn" type="button">Export JSON</button>
+
+        <label class="btn" for="importJsonInput">Import JSON</label>
+        <input id="importJsonInput" type="file" accept="application/json" style="display:none" />
+      </div>
+    </div>
+
+    <div class="boardWrap" id="captureArea">
+      <div class="boardHeader">
+        <div class="left">
+          <span class="pill" id="viewPill">Quarter</span>
+          <span class="pill" id="countPill">0 item</span>
+          <span class="pill">Drag and drop to move</span>
+        </div>
+        <div class="left">
+          <span class="pill">Saved locally </span>
+        </div>
+      </div>
+
+      <div id="board" class="board"></div>
+      <div id="empty" class="empty" style="display:none;">No items. Press a key <b>New</b>.</div>
+    </div>
+  </div>
+
+  <div id="modalOverlay" class="modalOverlay" role="dialog" aria-modal="true" aria-label="Editor item">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="h" id="modalTitle">New item</div>
+        <button class="iconBtn" id="closeModalBtn" type="button" aria-label="Chiudi">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="full">
+          <label class="label">Title</label>
+          <input id="mTitle" class="input" type="text" placeholder="Es. Better onboarding" />
+        </div>
+
+        <div class="full">
+          <label class="label">Short description</label>
+          <textarea id="mDesc" class="textarea" placeholder="2-3 righe, utili per stakeholder"></textarea>
+        </div>
+
+        <div>
+          <label class="label">State</label>
+          <select id="mStatus" class="select2">
+            <option value="idea">Idea</option>
+            <option value="planned">Planned</option>
+            <option value="in_progress">In progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="label">Owner</label>
+          <input id="mOwner" class="input" type="text" placeholder="Es. Team Growth" />
+        </div>
+
+        <div class="full">
+          <label class="label">Tag (Comma separated, max 3)</label>
+          <input id="mTags" class="input" type="text" placeholder="Retention, iOS, Data" />
+        </div>
+
+        <div>
+          <label class="label">Quarter</label>
+          <select id="mQuarter" class="select2"></select>
+        </div>
+
+        <div>
+          <label class="label">Now/Next/Later</label>
+          <select id="mNNL" class="select2">
+            <option value="now">Now</option>
+            <option value="next">Next</option>
+            <option value="later">Later</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modalFoot">
+        <button id="deleteBtn" class="btn danger" type="button" style="display:none;">Delete</button>
+        <div style="display:flex; gap:10px; margin-left:auto;">
+          <button id="cancelBtn" class="btn" type="button">Null</button>
+          <button id="saveBtn" class="btn primary" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+
+  <script>
+    const LS_KEY  = "roadmap_mvp_final_v1";
+    const LS_VIEW = "roadmap_mvp_last_view";
+
+    const uid = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
+
+    function safeJsonParse(s, fallback){ try { return JSON.parse(s); } catch { return fallback; } }
+
+    function downloadText(filename, text, mime="application/json"){
+      const blob = new Blob([text], {type:mime});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function clampTags(raw){
+      return raw.split(",").map(t => t.trim()).filter(Boolean).slice(0,3);
+    }
+
+    function statusLabel(s){
+      return ({idea:"Idea", planned:"Planned", in_progress:"In progress", done:"Done"})[s] || "Planned";
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+
+    let state = {
+      name: "Roadmap",
+      items: [],
+      year: new Date().getFullYear(),
+      view: "quarter",     // "quarter" | "nnl"
+      search: "",
+      tagFilter: [],       // array di tag selezionati
+      tagMode: "and"       // "and" | "or"
+    };
+
+    function defaultQuarterKey(year){
+      const month = new Date().getMonth();
+      const q = Math.floor(month / 3) + 1;
+      return `${year}-Q${q}`;
+    }
+    function quarterOptionsForYear(year){ return [1,2,3,4].map(q => `${year}-Q${q}`); }
+    function quarterTitle(key){ const [y,q]=key.split("-"); return `${q} ${y}`; }
+
+    function load(){
+      const saved = safeJsonParse(localStorage.getItem(LS_KEY), null);
+      const savedView = localStorage.getItem(LS_VIEW);
+
+      if(saved){
+        state = {
+          ...state,
+          name: saved.name || state.name,
+          items: Array.isArray(saved.items) ? saved.items : [],
+          year: Number.isFinite(saved.year) ? saved.year : state.year,
+          view: (saved.view === "nnl" || saved.view === "quarter") ? saved.view : state.view,
+          search: typeof saved.search === "string" ? saved.search : "",
+          tagFilter: Array.isArray(saved.tagFilter) ? saved.tagFilter : [],
+          tagMode: (saved.tagMode === "or" || saved.tagMode === "and") ? saved.tagMode : "and"
+        };
+      }
+      if(savedView === "quarter" || savedView === "nnl") state.view = savedView;
+    }
+
+    function save(){
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        name: state.name,
+        items: state.items,
+        year: state.year,
+        view: state.view,
+        search: state.search,
+        tagFilter: state.tagFilter,
+        tagMode: state.tagMode
+      }));
+      localStorage.setItem(LS_VIEW, state.view);
+    }
+
+    const el = {
+      roadmapName: document.getElementById("roadmapName"),
+      subtitle: document.getElementById("subtitle"),
+      btnQuarter: document.getElementById("btnQuarter"),
+      btnNNL: document.getElementById("btnNNL"),
+      yearSelect: document.getElementById("yearSelect"),
+      search: document.getElementById("search"),
+      tagBar: document.getElementById("tagBar"),
+      addBtn: document.getElementById("addBtn"),
+      board: document.getElementById("board"),
+      empty: document.getElementById("empty"),
+      viewPill: document.getElementById("viewPill"),
+      countPill: document.getElementById("countPill"),
+      exportJsonBtn: document.getElementById("exportJsonBtn"),
+      importJsonInput: document.getElementById("importJsonInput"),
+      exportPdfBtn: document.getElementById("exportPdfBtn"),
+      exportPngBtn: document.getElementById("exportPngBtn"),
+      captureArea: document.getElementById("captureArea"),
+
+      modalOverlay: document.getElementById("modalOverlay"),
+      modalTitle: document.getElementById("modalTitle"),
+      closeModalBtn: document.getElementById("closeModalBtn"),
+      cancelBtn: document.getElementById("cancelBtn"),
+      saveBtn: document.getElementById("saveBtn"),
+      deleteBtn: document.getElementById("deleteBtn"),
+      mTitle: document.getElementById("mTitle"),
+      mDesc: document.getElementById("mDesc"),
+      mStatus: document.getElementById("mStatus"),
+      mOwner: document.getElementById("mOwner"),
+      mTags: document.getElementById("mTags"),
+      mQuarter: document.getElementById("mQuarter"),
+      mNNL: document.getElementById("mNNL"),
+    };
+
+    let editingId = null;
+
+    function syncYearSelect(){
+      const current = new Date().getFullYear();
+      const years = [current-1, current, current+1, current+2];
+      el.yearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+      el.yearSelect.value = String(state.year);
+      el.yearSelect.style.display = (state.view === "quarter") ? "inline-flex" : "none";
+    }
+
+    function syncQuarterSelectOptions(){
+      const opts = quarterOptionsForYear(state.year);
+      el.mQuarter.innerHTML = opts.map(k => `<option value="${k}">${quarterTitle(k)}</option>`).join("");
+    }
+
+    function openModal(item=null){
+      editingId = item ? item.id : null;
+      el.modalOverlay.style.display = "flex";
+      el.modalTitle.textContent = item ? "Edit item" : "New item";
+      el.deleteBtn.style.display = item ? "inline-flex" : "none";
+
+      el.mTitle.value = item?.title || "";
+      el.mDesc.value = item?.desc || "";
+      el.mStatus.value = item?.status || "planned";
+      el.mOwner.value = item?.owner || "";
+      el.mTags.value = (item?.tags || []).join(", ");
+
+      syncQuarterSelectOptions();
+      el.mQuarter.value = item?.quarter || defaultQuarterKey(state.year);
+      el.mNNL.value = item?.nnl || "now";
+
+      if(!item){
+        if(state.view === "quarter") el.mQuarter.value = defaultQuarterKey(state.year);
+        else el.mNNL.value = "now";
+      }
+
+      setTimeout(() => el.mTitle.focus(), 0);
+    }
+
+    function closeModal(){
+      editingId = null;
+      el.modalOverlay.style.display = "none";
+    }
+
+    function nextOrderForColumn(view, colKey){
+      let max = -1;
+      for(const it of state.items){
+        const key = (view === "quarter") ? it.quarter : it.nnl;
+        if(key !== colKey) continue;
+        const ord = (it.order && it.order[colKey] != null) ? it.order[colKey] : 0;
+        if(ord > max) max = ord;
+      }
+      return max + 1;
+    }
+
+    function getColumnKeyForItem(view, it){
+      return view === "quarter" ? it.quarter : it.nnl;
+    }
+
+    function itemOrderInColumn(it, colKey){
+      if(!it.order) return 0;
+      const v = it.order[colKey];
+      return Number.isFinite(v) ? v : 0;
+    }
+
+    function normalizeOrders(view, colKey){
+      const items = state.items
+        .filter(it => getColumnKeyForItem(view, it) === colKey)
+        .sort((a,b) => itemOrderInColumn(a,colKey) - itemOrderInColumn(b,colKey));
+      items.forEach((it, idx) => {
+        if(!it.order) it.order = {};
+        it.order[colKey] = idx;
+      });
+    }
+
+    function upsertItemFromModal(){
+      const title = el.mTitle.value.trim();
+      if(!title){ el.mTitle.focus(); return; }
+
+      const tags = clampTags(el.mTags.value);
+      const quarter = el.mQuarter.value;
+      const nnl = el.mNNL.value;
+
+      if(editingId){
+        const idx = state.items.findIndex(i => i.id === editingId);
+        if(idx >= 0){
+          const it = state.items[idx];
+          state.items[idx] = {
+            ...it,
+            title,
+            desc: el.mDesc.value.trim(),
+            status: el.mStatus.value,
+            owner: el.mOwner.value.trim(),
+            tags,
+            quarter,
+            nnl
+          };
+        }
+      } else {
+        const id = uid();
+        const item = {
+          id,
+          title,
+          desc: el.mDesc.value.trim(),
+          status: el.mStatus.value,
+          owner: el.mOwner.value.trim(),
+          tags,
+          quarter,
+          nnl,
+          order: {}
+        };
+        item.order[quarter] = nextOrderForColumn("quarter", quarter);
+        item.order[nnl] = nextOrderForColumn("nnl", nnl);
+        state.items.unshift(item);
+      }
+
+      save();
+      render();
+      closeModal();
+    }
+
+    function deleteEditing(){
+      if(!editingId) return;
+      state.items = state.items.filter(i => i.id !== editingId);
+      save();
+      render();
+      closeModal();
+    }
+
+    function viewLabel(){
+      return state.view === "quarter" ? "Quarter" : "Now / Next / Later";
+    }
+
+    function colDefs(){
+      if(state.view === "quarter"){
+        const y = state.year;
+        return [1,2,3,4].map(q => ({ key: `${y}-Q${q}`, title: `Q${q} ${y}`, subtitle: "" }));
+      }
+      return [
+        { key:"now", title:"Now", subtitle:"" },
+        { key:"next", title:"Next", subtitle:"" },
+        { key:"later", title:"Later", subtitle:"" }
+      ];
+    }
+
+    // Contatori tag: view + (year se quarter) + search. NO tagFilter.
+    function getBaseScopeItems(){
+      const s = state.search.trim().toLowerCase();
+
+      return state.items.filter(it => {
+        if(state.view === "quarter"){
+          if(typeof it.quarter !== "string") return false;
+          if(!it.quarter.startsWith(String(state.year) + "-")) return false;
+        } else {
+          if(!["now","next","later"].includes(it.nnl)) return false;
+        }
+
+        if(!s) return true;
+
+        return (it.title || "").toLowerCase().includes(s) ||
+               (it.desc || "").toLowerCase().includes(s) ||
+               (it.owner || "").toLowerCase().includes(s) ||
+               (it.tags || []).join(" ").toLowerCase().includes(s);
+      });
+    }
+
+    function computeTagCounts(){
+      const base = getBaseScopeItems();
+      const counts = new Map();
+      for(const it of base){
+        for(const t of (it.tags || [])){
+          const tag = (t || "").trim();
+          if(!tag) continue;
+          counts.set(tag, (counts.get(tag) || 0) + 1);
+        }
+      }
+      return counts;
+    }
+
+    function toggleTagFilter(tag){
+      const idx = state.tagFilter.indexOf(tag);
+      if(idx >= 0) state.tagFilter.splice(idx, 1);
+      else state.tagFilter.push(tag);
+      save();
+      render();
+    }
+
+    function clearTagFilter(){
+      state.tagFilter = [];
+      save();
+      render();
+    }
+
+    function toggleTagMode(){
+      state.tagMode = (state.tagMode === "and") ? "or" : "and";
+      save();
+      render();
+    }
+
+    function renderTagBar(){
+      const counts = computeTagCounts();
+      const tags = Array.from(counts.keys()).sort((a,b) => a.localeCompare(b));
+
+      el.tagBar.innerHTML = "";
+
+      // All
+      const all = document.createElement("button");
+      all.type = "button";
+      all.className = "chip" + (state.tagFilter.length === 0 ? " active" : "");
+      all.textContent = "All";
+      all.addEventListener("click", clearTagFilter);
+      el.tagBar.appendChild(all);
+
+      if(state.tagFilter.length > 0){
+        const x = document.createElement("button");
+        x.type = "button";
+        x.className = "chip clearX";
+        x.textContent = "✕";
+        x.title = "Remove all tag filters";
+        x.addEventListener("click", clearTagFilter);
+        el.tagBar.appendChild(x);
+
+        const mode = document.createElement("button");
+        mode.type = "button";
+        mode.className = "chip mode";
+        mode.title = "Logica filtri tag (clicca per cambiare)";
+        mode.textContent = state.tagMode.toUpperCase();
+        mode.addEventListener("click", toggleTagMode);
+        el.tagBar.appendChild(mode);
+
+        const pill = document.createElement("div");
+        pill.className = "chip filterPill";
+        pill.textContent = `Filtri: ${state.tagFilter.join(" + ")} (${state.tagMode.toUpperCase()})`;
+        el.tagBar.appendChild(pill);
+      }
+
+      for(const t of tags){
+        const count = counts.get(t) || 0;
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip" + (state.tagFilter.includes(t) ? " active" : "");
+        chip.innerHTML = `<span>${escapeHtml(t)}</span><span class="count">${count}</span>`;
+        chip.addEventListener("click", () => toggleTagFilter(t));
+        el.tagBar.appendChild(chip);
+      }
+    }
+
+    function matchesFilters(it){
+      const s = state.search.trim().toLowerCase();
+
+      // scope view + year
+      if(state.view === "quarter"){
+        if(typeof it.quarter !== "string") return false;
+        if(!it.quarter.startsWith(String(state.year) + "-")) return false;
+      } else {
+        if(!["now","next","later"].includes(it.nnl)) return false;
+      }
+
+      // tag filter AND/OR
+      if(state.tagFilter.length > 0){
+        const itemTags = (it.tags || []).map(x => (x || "").toLowerCase());
+        if(state.tagMode === "and"){
+          const ok = state.tagFilter.every(t => itemTags.includes(t.toLowerCase()));
+          if(!ok) return false;
+        } else {
+          const ok = state.tagFilter.some(t => itemTags.includes(t.toLowerCase()));
+          if(!ok) return false;
+        }
+      }
+
+      // search
+      if(!s) return true;
+
+      return (it.title || "").toLowerCase().includes(s) ||
+             (it.desc || "").toLowerCase().includes(s) ||
+             (it.owner || "").toLowerCase().includes(s) ||
+             (it.tags || []).join(" ").toLowerCase().includes(s);
+    }
+
+    function countVisibleItems(){
+      return state.items.filter(matchesFilters).length;
+    }
+
+    function renderCard(it){
+      const card = document.createElement("div");
+      card.className = "card";
+      card.draggable = true;
+      card.dataset.id = it.id;
+
+      const top = document.createElement("div");
+      top.className = "cardTop";
+
+      const left = document.createElement("div");
+      left.style.minWidth = "0";
+      left.style.flex = "1";
+
+      const title = document.createElement("div");
+      title.className = "cardTitle";
+      title.textContent = it.title || "Untitled";
+      left.appendChild(title);
+
+      if(it.desc){
+        const desc = document.createElement("div");
+        desc.className = "cardDesc";
+        desc.textContent = it.desc;
+        left.appendChild(desc);
+      }
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "iconBtn";
+      editBtn.type = "button";
+      editBtn.textContent = "✎";
+      editBtn.title = "Edit";
+      editBtn.addEventListener("click", (e) => { e.stopPropagation(); openModal(it); });
+
+      top.appendChild(left);
+      top.appendChild(editBtn);
+      card.appendChild(top);
+
+      const meta = document.createElement("div");
+      meta.className = "metaRow";
+
+      const st = document.createElement("span");
+      st.className = "badge status";
+      st.textContent = statusLabel(it.status);
+      meta.appendChild(st);
+
+      if(it.owner){
+        const ow = document.createElement("span");
+        ow.className = "badge";
+        ow.textContent = it.owner;
+        meta.appendChild(ow);
+      }
+
+      for(const t of (it.tags || [])){
+        const tg = document.createElement("button");
+        tg.type = "button";
+        tg.className = "tag";
+        tg.textContent = t;
+        tg.style.cursor = "pointer";
+        tg.addEventListener("click", (e) => {
+          e.stopPropagation();
+          // Qui è la parte critica: toggle, NON replace
+          toggleTagFilter(t);
+        });
+        meta.appendChild(tg);
+      }
+
+      card.appendChild(meta);
+      card.addEventListener("click", () => openModal(it));
+
+      card.addEventListener("dragstart", (e) => {
+        card.classList.add("dragging");
+        e.dataTransfer.setData("text/plain", it.id);
+        e.dataTransfer.effectAllowed = "move";
+      });
+      card.addEventListener("dragend", () => card.classList.remove("dragging"));
+
+      return card;
+    }
+
+    function handleDrop(itemId, targetColKey){
+      const idx = state.items.findIndex(i => i.id === itemId);
+      if(idx < 0) return;
+
+      const it = state.items[idx];
+      const currentKey = getColumnKeyForItem(state.view, it);
+      if(currentKey === targetColKey) return;
+
+      if(state.view === "quarter"){
+        it.quarter = targetColKey;
+        if(!it.order) it.order = {};
+        it.order[targetColKey] = nextOrderForColumn("quarter", targetColKey);
+        normalizeOrders("quarter", currentKey);
+        normalizeOrders("quarter", targetColKey);
+      } else {
+        it.nnl = targetColKey;
+        if(!it.order) it.order = {};
+        it.order[targetColKey] = nextOrderForColumn("nnl", targetColKey);
+        normalizeOrders("nnl", currentKey);
+        normalizeOrders("nnl", targetColKey);
+      }
+
+      save();
+      render();
+    }
+
+    function render(){
+      el.viewPill.textContent = viewLabel();
+      el.countPill.textContent = `${countVisibleItems()} item`;
+      syncYearSelect();
+      renderTagBar();
+
+      // Subtitle utile: vedi SEMPRE cosa è selezionato
+      const info = state.tagFilter.length
+        ? `Filters: ${state.tagFilter.join(" + ")} (${state.tagMode.toUpperCase()})`
+        : "Filters: none";
+      if(el.subtitle) el.subtitle.textContent = info;
+
+      el.btnQuarter.classList.toggle("active", state.view === "quarter");
+      el.btnNNL.classList.toggle("active", state.view === "nnl");
+
+      const defs = colDefs();
+      el.board.classList.toggle("nnL", state.view === "nnl");
+      el.board.innerHTML = "";
+
+      const visible = state.items.filter(matchesFilters);
+      el.empty.style.display = (visible.length === 0) ? "block" : "none";
+
+      for(const col of defs){
+        const colEl = document.createElement("div");
+        colEl.className = "col";
+        colEl.dataset.colKey = col.key;
+
+        const titleEl = document.createElement("div");
+        titleEl.className = "colTitle";
+        titleEl.innerHTML = `<div>${col.title} <span>${col.subtitle || ""}</span></div><span></span>`;
+        colEl.appendChild(titleEl);
+
+        const zone = document.createElement("div");
+        zone.className = "dropzone";
+        zone.dataset.colKey = col.key;
+
+        zone.addEventListener("dragover", (e) => { e.preventDefault(); colEl.classList.add("dragover"); });
+        zone.addEventListener("dragleave", () => colEl.classList.remove("dragover"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          colEl.classList.remove("dragover");
+          const id = e.dataTransfer.getData("text/plain");
+          handleDrop(id, col.key);
+        });
+
+        const itemsInCol = visible
+          .filter(it => getColumnKeyForItem(state.view, it) === col.key)
+          .sort((a,b) => itemOrderInColumn(a, col.key) - itemOrderInColumn(b, col.key));
+
+        for(const it of itemsInCol) zone.appendChild(renderCard(it));
+        colEl.appendChild(zone);
+        el.board.appendChild(colEl);
+
+        titleEl.lastElementChild.textContent = `${itemsInCol.length}`;
+        titleEl.lastElementChild.style.color = "rgba(255,255,255,.45)";
+        titleEl.lastElementChild.style.fontWeight = "600";
+        titleEl.lastElementChild.style.fontSize = "12px";
+      }
+    }
+
+    function exportJSON(){
+      const payload = { ...state };
+      const stamp = new Date().toISOString().slice(0,19).replace(/:/g,"-");
+      downloadText(`roadmap-${stamp}.json`, JSON.stringify(payload, null, 2));
+    }
+
+    function importJSON(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        const data = safeJsonParse(reader.result, null);
+        if(!data || !Array.isArray(data.items)){
+          alert("JSON non valido. Serve un file esportato da questa app.");
+          return;
+        }
+        state = {
+          ...state,
+          name: data.name || state.name,
+          year: Number.isFinite(data.year) ? data.year : state.year,
+          view: (data.view === "nnl" || data.view === "quarter") ? data.view : state.view,
+          items: data.items,
+          search: typeof data.search === "string" ? data.search : "",
+          tagFilter: Array.isArray(data.tagFilter) ? data.tagFilter : [],
+          tagMode: (data.tagMode === "or" || data.tagMode === "and") ? data.tagMode : "and"
+        };
+        save();
+        el.roadmapName.value = state.name;
+        el.search.value = state.search;
+        render();
+      };
+      reader.readAsText(file);
+    }
+
+	async function exportPNG(){
+	  if(typeof html2canvas !== "function"){
+	    alert("Export PNG richiede html2canvas.");
+	    return;
+	  }
+
+	  const el = document.getElementById("captureArea");
+
+	  // FIX: background temporaneo solido
+	  const prevBg = el.style.background;
+	  el.style.background = "#0b0c10";
+
+	  const canvas = await html2canvas(el, {
+	    backgroundColor: "#0b0c10",
+	    scale: 2,
+	    useCORS: true
+	  });
+
+	  el.style.background = prevBg;
+
+	  const dataUrl = canvas.toDataURL("image/png");
+	  const a = document.createElement("a");
+	  const stamp = new Date().toISOString().slice(0,19).replace(/:/g,"-");
+	  a.download = `roadmap-${state.view}-${stamp}.png`;
+	  a.href = dataUrl;
+	  document.body.appendChild(a);
+	  a.click();
+	  a.remove();
+	}
+	
+    function setView(v){
+      state.view = v;
+      localStorage.setItem(LS_VIEW, v);
+      save();
+      syncYearSelect();
+      render();
+    }
+
+    function setYear(y){
+      state.year = y;
+      save();
+      syncQuarterSelectOptions();
+      render();
+    }
+
+    // Wiring UI
+    el.btnQuarter.addEventListener("click", () => setView("quarter"));
+    el.btnNNL.addEventListener("click", () => setView("nnl"));
+
+    el.yearSelect.addEventListener("change", () => {
+      const y = parseInt(el.yearSelect.value, 10);
+      if(Number.isFinite(y)) setYear(y);
+    });
+
+    el.search.addEventListener("input", () => {
+      state.search = el.search.value;
+      save();
+      render();
+    });
+
+    el.roadmapName.addEventListener("input", () => {
+      state.name = el.roadmapName.value.trim() || "Roadmap";
+      save();
+    });
+
+    el.addBtn.addEventListener("click", () => openModal(null));
+    el.exportJsonBtn.addEventListener("click", exportJSON);
+    el.importJsonInput.addEventListener("change", (e) => {
+      const f = e.target.files && e.target.files[0];
+      if(f) importJSON(f);
+      e.target.value = "";
+    });
+
+    el.exportPdfBtn.addEventListener("click", () => window.print());
+    el.exportPngBtn.addEventListener("click", exportPNG);
+
+    el.closeModalBtn.addEventListener("click", closeModal);
+    el.cancelBtn.addEventListener("click", closeModal);
+    el.saveBtn.addEventListener("click", upsertItemFromModal);
+    el.deleteBtn.addEventListener("click", deleteEditing);
+    el.modalOverlay.addEventListener("click", (e) => { if(e.target === el.modalOverlay) closeModal(); });
+
+    window.addEventListener("keydown", (e) => {
+      if(e.key === "Escape" && el.modalOverlay.style.display === "flex") closeModal();
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); el.search.focus(); }
+    });
+
+    // Boot
+    load();
+    el.roadmapName.value = state.name;
+    el.search.value = state.search;
+
+    syncYearSelect();
+    syncQuarterSelectOptions();
+
+    // Seed demo
+    if(state.items.length === 0){
+      const y = state.year;
+      const seed = [
+        { title:"Onboarding più veloce", desc:"Ridurre time-to-value e drop-off nei primi 3 giorni.", status:"planned", owner:"Growth", tags:["Retention","UX"], quarter:`${y}-Q1`, nnl:"now" },
+        { title:"Tracking eventi pulito", desc:"Event taxonomy e dashboard base per decisioni rapide.", status:"idea", owner:"Data", tags:["Analytics","Retention"], quarter:`${y}-Q2`, nnl:"next" },
+        { title:"Performance mobile", desc:"Ridurre TTI e migliorare fluidità delle schermate chiave.", status:"planned", owner:"Mobile", tags:["iOS","Android"], quarter:`${y}-Q3`, nnl:"later" },
+      ].map((s, i) => ({ id: uid(), ...s, order: { [s.quarter]: i, [s.nnl]: i } }));
+      state.items = seed;
+      save();
+    }
+
+    render();
+  </script>
+</body>
+</html>

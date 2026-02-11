@@ -1,7 +1,6 @@
 # Product Roadmap MVP
 
-🌍 Live demo  
-https://product-roadmap-mvp.netlify.app
+🌍 Live demo: https://surfab.github.io/product-roadmap-mvp/
 
 A lightweight, offline-first web app to quickly create and share product roadmaps.
 

@@ -1,5 +1,7 @@
 # Product Roadmap
 
+[🇬🇧 English version](README.en.md)
+
 App offline-first per gestire una roadmap di prodotto, in un unico file HTML. Niente build step, niente backend, niente dipendenze NPM. Apri e usa.
 
 <img width="3060" height="3000" alt="Screenshot 21" src="https://github.com/user-attachments/assets/62c4247d-bbb8-4400-bf0f-e06b371196a3" />
@@ -177,7 +179,8 @@ Il bottone **PDF** apre il dialog di stampa del browser con uno stylesheet `@med
 ├── index.html              ← l'app
 ├── sample-roadmap.json     ← dati di esempio per import
 ├── README.md               ← questo file
-└── screenshots/            ← screenshot
+├── README.en.md            ← versione inglese
+└── images/                 ← screenshot
 ```
 
 ---

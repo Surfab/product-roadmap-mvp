@@ -1,11 +1,8 @@
 # Product Roadmap
 
-[🇬🇧 English version](README.en.md)
-
 App offline-first per gestire una roadmap di prodotto, in un unico file HTML. Niente build step, niente backend, niente dipendenze NPM. Apri e usa.
 
-<img width="3060" height="3000" alt="Screenshot 21" src="https://github.com/user-attachments/assets/62c4247d-bbb8-4400-bf0f-e06b371196a3" />
-
+![Screenshot](screenshots/gui-v4-final.png)
 
 ---
 
@@ -15,6 +12,7 @@ App offline-first per gestire una roadmap di prodotto, in un unico file HTML. Ni
 - **Drag-and-drop** per spostare gli item tra colonne o riordinarli dentro la stessa colonna.
 - **Filtri combinabili**: per tag (con logica AND / OR), per status, per testo libero.
 - **Persistenza locale** in `localStorage` — i dati restano tra refresh, niente cloud.
+- **Bilingue IT / EN** — toggle in topbar, scelta persistita, auto-detect della lingua del browser al primo avvio.
 - **Import / Export** in JSON, **export PNG** (snapshot della board), **stampa PDF** via dialog di stampa del browser.
 - **Undo** dopo eliminazione (toast con 6 secondi per ripristinare).
 - **Validazione live**, char-counter sui campi, autocomplete dei tag basato sui tag esistenti.
@@ -42,7 +40,6 @@ Contiene 14 item su tutti i quarter, status e owner.
 ---
 
 ## ⌨️ Scorciatoie da tastiera
-
 | Tasto | Azione |
 |---|---|
 | `N` | Nuovo item (quando fuori dai campi di input) |
@@ -51,6 +48,41 @@ Contiene 14 item su tutti i quarter, status e owner.
 | `Esc` | Chiudi modal / menu Export |
 
 Le scorciatoie sono visibili nel footer in basso alla board.
+
+---
+
+## 🌐 Lingua
+
+L'interfaccia è disponibile in **italiano** e **inglese**. Cambi lingua con il toggle `IT / EN` in alto a destra nella topbar.
+
+- La scelta è salvata in `localStorage` (chiave `roadmap_lang`) e persiste tra le sessioni.
+- Al primo avvio, se non c'è una preferenza salvata, l'app prova a dedurre la lingua dal browser (`navigator.language`), con fallback su italiano.
+- Viene tradotta solo la **chrome** (bottoni, label, menu, toast, scorciatoie). Il **contenuto degli item** (titoli, descrizioni, owner, tag) resta come l'hai scritto — non viene tradotto.
+
+### Aggiungere una lingua
+
+Le stringhe vivono in un unico oggetto `STRINGS` dentro `index.html`:
+
+```js
+const STRINGS = {
+  it: { "action.new": "Nuovo", /* ... */ },
+  en: { "action.new": "New",   /* ... */ }
+};
+```
+
+Per aggiungere p.es. lo spagnolo: duplica un blocco, traduci i valori, aggiungi `"es"` a `LANGS`, e un bottone nel toggle. Il resto (il walk dei `data-i18n`, l'helper `t()`) funziona già.
+
+Nel markup, gli elementi statici sono annotati con attributi:
+
+| Attributo | Cosa traduce |
+|---|---|
+| `data-i18n` | `textContent` |
+| `data-i18n-html` | `innerHTML` (per stringhe con markup) |
+| `data-i18n-ph` | `placeholder` |
+| `data-i18n-title` | `title` (tooltip) |
+| `data-i18n-aria` | `aria-label` |
+
+Le stringhe dinamiche (toast, titoli della board, tempi relativi) passano da `t(key, vars)` con interpolazione `{placeholder}`.
 
 ---
 
@@ -89,6 +121,8 @@ Lo state completo salvato in `localStorage` sotto la chiave `roadmap_v1`:
 }
 ```
 
+La lingua è salvata a parte, sotto la chiave `roadmap_lang` (`"it"` | `"en"`).
+
 ### Migrazione
 
 L'app cerca anche la vecchia chiave `roadmap_mvp_final_v1` e la migra automaticamente al primo load.
@@ -105,6 +139,7 @@ index.html              ~1600 righe
 ├── <body>             markup statico: topbar, filter row, board, modal, toast
 └── <script>           tutto il logic in un IIFE-like blocco
     ├── Constants      LS keys, VIEWS, NNL_KEYS, TAG_MODES, STATUSES, LIMITS
+    ├── i18n           STRINGS (it/en), t(), applyStaticI18n(), setLang()
     ├── Helpers        uid, escape, debounce, safe localStorage wrappers
     ├── State          single mutable object, persisted on every commit
     ├── Filtering      itemMatchesScope + itemMatchesSearch + matchesFilters
@@ -121,6 +156,8 @@ index.html              ~1600 righe
 | `handleDrop(itemId, colKey, insertIndex)` | Drag-drop tra/dentro colonne. Calcola `(prev + next) / 2` come nuovo order, poi normalizza. |
 | `showToast(msg, type, opts)` | Notifiche bottom-right. Supporta `actionLabel + onAction` per gli undo. |
 | `computeTagCounts()` | Single-pass su tutti gli item filtrati. Restituisce `Map<tag, count>`. |
+| `t(key, vars)` | Traduzione con interpolazione `{placeholder}`. Fallback: lingua corrente → en → chiave stessa. |
+| `applyStaticI18n()` | Walk dei nodi `[data-i18n*]` e applica la lingua corrente a testo, placeholder, title, aria-label. |
 
 ### Dipendenze esterne
 
@@ -179,8 +216,7 @@ Il bottone **PDF** apre il dialog di stampa del browser con uno stylesheet `@med
 ├── index.html              ← l'app
 ├── sample-roadmap.json     ← dati di esempio per import
 ├── README.md               ← questo file
-├── README.en.md            ← versione inglese
-└── images/                 ← screenshot
+└── screenshots/            ← screenshot
 ```
 
 ---
@@ -194,6 +230,7 @@ Refactor da uno script di ~1100 righe a ~1600 righe (con +6 feature, validazione
 3. Polish GUI fase 1 (3-cluster topbar, filter row dedicata, board header, distinguere colonne, status-as-left-border)
 4. Polish GUI fase 2 (tipografia, densità, focus-visible, drag-handle, loading states, subtitle dinamico)
 5. Feature finali (validation modal, autocomplete tag, shortcuts footer, drag-sort dentro colonna, mobile responsive)
+6. Internazionalizzazione (i18n IT/EN con toggle, `STRINGS` + `t()`, persistenza lingua)
 
 ---
 

@@ -16,6 +16,17 @@
       --shadow2:0 10px 24px rgba(0,0,0,.28);
       --radius:16px;
       --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+
+      /* Layout tokens */
+      --app-max-w:1240px;
+      --board-min-h:64vh;
+      --topbar-top:12px;
+
+      /* Status colors (#5 — left border on card + dots in breakdown) */
+      --status-idea:rgba(180,180,255,.75);
+      --status-planned:rgba(150,200,255,.75);
+      --status-in_progress:rgba(255,200,120,.9);
+      --status-done:rgba(140,220,170,.9);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -32,44 +43,53 @@
       -moz-osx-font-smoothing:grayscale;
     }
 
-    .app{max-width:1240px;margin:28px auto;padding:0 18px 26px}
+    .app{max-width:var(--app-max-w);margin:28px auto;padding:0 18px 26px}
 
+    /* ============ TOPBAR ============ (#1 — 3-cluster grid) */
     .topbar{
-      display:flex;align-items:center;gap:12px;
-      padding:14px;
+      display:grid;
+      grid-template-columns:minmax(0, auto) 1fr auto;
+      column-gap:18px;
+      row-gap:12px;
+      align-items:center;
+      padding:14px 16px;
       border:1px solid var(--stroke);
       background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       backdrop-filter:blur(12px);
       -webkit-backdrop-filter:blur(12px);
-      position:sticky;top:12px;z-index:20;
-      flex-wrap:wrap;
+      position:sticky;top:var(--topbar-top);z-index:20;
     }
-    .titleWrap{
-      display:flex;flex-direction:column;gap:2px;
-      min-width:240px;max-width:440px;
-      flex:1 1 340px;
+    @media (max-width: 1080px){
+      .topbar{ grid-template-columns: 1fr; }
+      .topbarFilters{ justify-content: flex-start !important; }
+      .topbarActions{ justify-self: stretch; }
     }
+
+    .topbarTitle{ min-width:0; display:flex; flex-direction:column; gap:2px }
     .title{display:flex;align-items:center;gap:10px}
     .title input{
       width:100%;
       border:none;outline:none;background:transparent;
       color:var(--text);
-      font-weight:650;font-size:16px;letter-spacing:.2px;
-      padding:6px 8px;border-radius:10px;
+      font-weight:700;font-size:22px;letter-spacing:-.2px;
+      padding:4px 6px;border-radius:10px;
       transition:background .18s ease, box-shadow .18s ease;
     }
     .title input:focus{
       background:rgba(255,255,255,.07);
       box-shadow:0 0 0 3px rgba(255,255,255,.08) inset;
     }
-    .subtitle{padding-left:8px;color:var(--muted);font-size:12px}
+    .subtitle{padding-left:6px;color:var(--muted);font-size:12px}
 
-    .controls{
-      display:flex;align-items:center;gap:10px;
-      flex-wrap:wrap;justify-content:flex-end;
-      flex:2 1 620px;
+    .topbarFilters{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      justify-content:center;
+    }
+    .topbarActions{
+      display:flex;align-items:center;gap:8px;
+      justify-self:end;
     }
 
     .segmented{
@@ -83,7 +103,7 @@
     }
     .segmented button{
       border:none;background:transparent;color:var(--muted);
-      padding:8px 12px;border-radius:999px;
+      padding:7px 12px;border-radius:999px;
       cursor:pointer;font-size:13px;
       transition:background .18s ease, color .18s ease, transform .12s ease;
       white-space:nowrap;
@@ -96,7 +116,7 @@
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.05);
       color:var(--text);
-      padding:9px 10px;border-radius:12px;
+      padding:8px 12px;border-radius:10px;
       font-size:13px;outline:none;cursor:pointer;
       transition:background .18s ease, border-color .18s ease;
     }
@@ -113,7 +133,7 @@
     .field svg{opacity:.75}
     .field input{
       border:none;outline:none;background:transparent;
-      color:var(--text);font-size:13px;width:210px;
+      color:var(--text);font-size:13px;width:200px;
     }
     .field input::placeholder{color:var(--muted2)}
 
@@ -121,26 +141,92 @@
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.05);
       color:var(--text);
-      padding:9px 12px;border-radius:12px;
+      padding:8px 12px;border-radius:10px;
       cursor:pointer;font-size:13px;
       transition:transform .12s ease, background .18s ease, border-color .18s ease;
-      display:flex;align-items:center;gap:8px;
+      display:inline-flex;align-items:center;gap:8px;
+      white-space:nowrap;
     }
     .btn:hover{background:rgba(255,255,255,.08);border-color:var(--stroke2)}
     .btn:active{transform:scale(.98)}
-    .btn.primary{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.20)}
+    .btn.primary{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22)}
+    .btn.primary:hover{background:rgba(255,255,255,.18)}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .btn:disabled:hover{background:rgba(255,255,255,.05);border-color:var(--stroke)}
 
-    /* Tag bar */
-    .tagBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:860px}
+    /* Custom focus-visible — replaces browser default outline (#12a) */
+    .btn:focus-visible,
+    .select:focus-visible,
+    .chip:focus-visible,
+    .iconBtn:focus-visible,
+    .menuItem:focus-visible,
+    .clearBtn:focus-visible,
+    .segmented button:focus-visible,
+    .toast .toastAction:focus-visible{
+      outline:2px solid rgba(122,162,255,.6);
+      outline-offset:2px;
+    }
+    .field:has(input:focus-visible){
+      outline:2px solid rgba(122,162,255,.5);
+      outline-offset:1px;
+    }
+    .input:focus-visible,
+    .textarea:focus-visible,
+    .select2:focus-visible{
+      box-shadow:0 0 0 3px rgba(122,162,255,.18);
+      border-color:rgba(122,162,255,.55);
+    }
+
+    /* Export menu dropdown (#1 — collapse 4 export buttons into one) */
+    .menu{position:relative}
+    .menuItems{
+      position:absolute;
+      right:0;top:calc(100% + 6px);
+      min-width:190px;
+      border:1px solid var(--stroke);
+      background:rgba(20,22,28,.96);
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      padding:6px;
+      z-index:30;
+      display:none;
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+    }
+    .menu.open .menuItems{display:block}
+    .menuItem{
+      display:block;width:100%;
+      text-align:left;
+      border:none;background:transparent;
+      color:var(--text);
+      padding:8px 10px;border-radius:8px;
+      cursor:pointer;font-size:13px;
+    }
+    .menuItem:hover{background:rgba(255,255,255,.08)}
+    .menuDivider{height:1px;background:var(--stroke);margin:4px 2px}
+
+    /* ============ FILTER ROW ============ (#2 — dedicated filter row) */
+    .filterRow{
+      margin-top:10px;
+      display:flex;align-items:center;gap:10px;
+      flex-wrap:wrap;
+      padding:10px 14px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.025);
+      border-radius:12px;
+    }
+    .filterRow .label{font-size:11px;color:var(--muted2);margin:0 4px 0 0;letter-spacing:.4px;text-transform:uppercase}
+    .tagBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1}
+
     .chip{
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.05);
       color:var(--muted);
-      padding:7px 10px;border-radius:999px;
+      padding:6px 10px;border-radius:999px;
       cursor:pointer;font-size:12px;
       transition:background .18s ease,border-color .18s ease,transform .12s ease,color .18s ease;
       user-select:none;white-space:nowrap;
-      display:flex;align-items:center;gap:8px;
+      display:inline-flex;align-items:center;gap:8px;
     }
     .chip:hover{background:rgba(255,255,255,.08);border-color:var(--stroke2);color:var(--text)}
     .chip:active{transform:scale(.98)}
@@ -153,16 +239,32 @@
       font-size:11px;line-height:1;
     }
     .chip.active .count{color:var(--text);border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.08)}
-    .chip.clearX{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:var(--text)}
-    .chip.mode{border-color:rgba(255,255,255,.18)}
-    .chip.filterPill{
-      cursor:default;
-      border-color:rgba(255,255,255,.10);
-      background:rgba(255,255,255,.035);
-      color:rgba(255,255,255,.80);
+    .chip.mode{
+      border-color:rgba(255,255,255,.20);
+      font-weight:650;letter-spacing:.4px;font-size:10px;
+      padding:6px 9px;
     }
+    .chip.statusChip{
+      border-color:var(--stroke2);
+      color:var(--text);
+    }
+    .chip.statusChip .dot{width:7px;height:7px;border-radius:999px}
+    .chip .x{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:16px;height:16px;border-radius:999px;
+      background:rgba(255,255,255,.08);color:var(--text);
+      font-size:10px;line-height:1;
+    }
+    .clearBtn{
+      margin-left:auto;
+      color:var(--muted);
+      background:transparent;border:none;
+      font-size:12px;cursor:pointer;
+      padding:6px 8px;border-radius:8px;
+    }
+    .clearBtn:hover{background:rgba(255,255,255,.06);color:var(--text)}
 
-    /* Board */
+    /* ============ BOARD ============ */
     .boardWrap{
       margin-top:14px;
       border:1px solid var(--stroke);
@@ -171,57 +273,135 @@
       box-shadow:var(--shadow2);
       overflow:hidden;
     }
+    /* Board header (#3 — replace pills with real heading + breakdown) */
     .boardHeader{
       display:flex;align-items:center;justify-content:space-between;
-      padding:12px 14px;border-bottom:1px solid var(--stroke);
+      padding:14px 16px;border-bottom:1px solid var(--stroke);
       background:rgba(255,255,255,.03);
-      flex-wrap:wrap;gap:10px;
+      flex-wrap:wrap;gap:14px;
     }
-    .boardHeader .left{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;flex-wrap:wrap}
-    .pill{padding:4px 10px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--muted);font-size:12px}
+    .boardTitle{
+      margin:0;
+      font-weight:700;font-size:16px;letter-spacing:-.1px;
+      display:flex;align-items:baseline;gap:10px;
+    }
+    .boardTitle .accent{color:var(--muted);font-weight:500;font-size:13px}
+    .boardSub{color:var(--muted);font-size:12px;margin-top:3px}
 
-    .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));min-height:64vh}
+    .statusBreakdown{
+      display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    }
+    .sbItem{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 9px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      border-radius:999px;
+      font-size:11px;color:var(--muted);
+    }
+    .sbItem .dot{width:7px;height:7px;border-radius:999px;display:inline-block}
+    .sbItem .sbCount{color:var(--text);font-weight:650;font-variant-numeric:tabular-nums}
+    .sbItem .dot.idea{background:var(--status-idea)}
+    .sbItem .dot.planned{background:var(--status-planned)}
+    .sbItem .dot.in_progress{background:var(--status-in_progress)}
+    .sbItem .dot.done{background:var(--status-done)}
+
+    .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));min-height:var(--board-min-h)}
     .board.nnL{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .col{padding:12px;border-right:1px solid var(--stroke);transition:background .18s ease}
+    .col{padding:12px;border-right:1px solid var(--stroke);transition:background .18s ease, opacity .2s ease}
     .col:last-child{border-right:none}
     .col.dragover{background:rgba(255,255,255,.05)}
-    .colTitle{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 10px;font-size:13px;font-weight:650}
-    .colTitle span{color:var(--muted);font-weight:600;font-size:12px}
-    .dropzone{display:flex;flex-direction:column;gap:10px;padding:6px;min-height:calc(64vh - 56px);border-radius:12px}
+    /* #4 — column states */
+    .col.past{opacity:.5}
+    .col.past:hover{opacity:.95}
+    .col.current{background:rgba(255,255,255,.025)}
+    .col.current .colTitle .colName{position:relative;padding-left:14px}
+    .col.current .colTitle .colName::before{
+      content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+      width:6px;height:6px;border-radius:999px;
+      background:var(--text);
+      box-shadow:0 0 0 3px rgba(255,255,255,.10);
+    }
+    /* Column title (#6 — bumped for better hierarchy) */
+    .colTitle{display:flex;align-items:center;justify-content:space-between;padding:10px 8px 14px;font-size:14px;font-weight:650;letter-spacing:-.1px}
+    .colTitle .colName{display:inline-flex;align-items:center;gap:7px}
+    .colTitle .colName .colNote{color:var(--muted);font-weight:500;font-size:11px;letter-spacing:0}
+    .colCount{
+      color:rgba(255,255,255,.45);
+      font-weight:600;font-size:12px;
+      font-variant-numeric:tabular-nums;
+    }
+    .dropzone{display:flex;flex-direction:column;gap:10px;padding:6px;min-height:calc(var(--board-min-h) - 56px);border-radius:12px}
+    .dropEmpty{
+      color:var(--muted2);
+      font-size:12px;
+      text-align:center;
+      padding:18px 8px;
+      border:1px dashed var(--stroke);
+      border-radius:12px;
+      background:rgba(255,255,255,.02);
+    }
 
-    /* Card */
+    /* ============ CARD ============ (#5 — status as left border) */
     .card{
+      position:relative;
       border:1px solid var(--stroke);
+      border-left:3px solid var(--muted2);
       background:rgba(255,255,255,.06);
-      border-radius:14px;padding:10px;
+      border-radius:14px;padding:10px 12px;
       cursor:grab;user-select:none;
       transition:transform .12s ease,background .18s ease,border-color .18s ease;
       box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
     }
-    .card:hover{background:rgba(255,255,255,.085);border-color:var(--stroke2)}
+    .card[data-status="idea"]{border-left-color:var(--status-idea)}
+    .card[data-status="planned"]{border-left-color:var(--status-planned)}
+    .card[data-status="in_progress"]{border-left-color:var(--status-in_progress)}
+    .card[data-status="done"]{border-left-color:var(--status-done)}
+    .card:hover{background:rgba(255,255,255,.085);border-top-color:var(--stroke2);border-right-color:var(--stroke2);border-bottom-color:var(--stroke2)}
     .card:active{cursor:grabbing;transform:scale(.99)}
     .card.dragging{opacity:.65;transform:rotate(-.2deg) scale(.99)}
     .cardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px}
-    .cardTitle{font-weight:650;font-size:13px;line-height:1.25}
-    .cardDesc{color:var(--muted);font-size:12px;line-height:1.3;margin-top:2px;white-space:pre-wrap}
+    .cardLeft{min-width:0;flex:1}
+    .cardActions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+    .cardTitle{font-weight:650;font-size:13.5px;line-height:1.3;letter-spacing:-.05px}
+    .cardDesc{color:var(--muted);font-size:12px;line-height:1.4;margin-top:3px;white-space:pre-wrap}
+    /* Drag-grab affordance on hover (#12b) */
+    .dragHandle{
+      color:var(--muted2);
+      font-size:13px;
+      letter-spacing:-1px;
+      line-height:1;
+      opacity:0;
+      padding:6px 3px;
+      cursor:grab;
+      user-select:none;
+      transition:opacity .15s ease,color .15s ease;
+    }
+    .card:hover .dragHandle{opacity:.7}
+    .dragHandle:hover{color:var(--text);opacity:1}
+    .card:active .dragHandle{cursor:grabbing}
     .metaRow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
     .badge,.tag{
-      font-size:11px;padding:4px 8px;border-radius:999px;
+      font-size:11px;padding:4px 9px;border-radius:999px;
       border:1px solid var(--stroke);
       background:rgba(255,255,255,.05);
       color:var(--muted);
     }
-    .badge.status{color:var(--text)}
+    .badge.status{color:var(--text);cursor:pointer;font-weight:550}
+    .tag{cursor:pointer}
     .iconBtn{
       border:none;background:transparent;color:var(--muted);
       cursor:pointer;padding:6px;border-radius:10px;
       transition:background .18s ease,color .18s ease,transform .12s ease;
+      display:inline-flex;align-items:center;justify-content:center;
     }
     .iconBtn:hover{background:rgba(255,255,255,.06);color:var(--text)}
     .iconBtn:active{transform:scale(.98)}
+    .iconBtn.danger{color:rgba(255,150,150,.85)}
+    .iconBtn.danger:hover{background:rgba(255,120,120,.14);color:rgba(255,200,200,1)}
     .empty{color:var(--muted);font-size:13px;padding:18px 14px}
 
-    /* Modal */
+    /* ============ MODAL ============ */
     .modalOverlay{
       position:fixed;inset:0;background:rgba(0,0,0,.52);
       display:none;align-items:center;justify-content:center;padding:20px;z-index:50;
@@ -234,11 +414,14 @@
       border-radius:18px;overflow:hidden;
       box-shadow:0 30px 80px rgba(0,0,0,.55);
     }
-    .modalHead{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--stroke)}
+    .modalHead{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--stroke);gap:10px}
     .modalHead .h{font-weight:700;font-size:14px}
+    .modalHead .meta{color:var(--muted2);font-size:11px;margin-top:2px}
+    .modalHead .actions{display:flex;align-items:center;gap:4px}
     .modalBody{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .modalBody .full{grid-column:1/-1}
     .label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px}
+    .charCount{float:right;font-size:11px;color:var(--muted2)}
     .input,.textarea,.select2{
       width:100%;
       border:1px solid var(--stroke);
@@ -249,15 +432,124 @@
     }
     .textarea{min-height:92px;resize:vertical}
     .input:focus,.textarea:focus,.select2:focus{background:rgba(255,255,255,.07);border-color:var(--stroke2)}
-    .modalFoot{display:flex;align-items:center;justify-content:space-between;padding:14px;border-top:1px solid var(--stroke);gap:10px;flex-wrap:wrap}
+    /* #1 — inline validation */
+    .input.error,.textarea.error,.select2.error{
+      border-color:rgba(255,120,120,.65);
+      background:rgba(255,120,120,.08);
+    }
+    .errorMsg{
+      display:none;
+      margin:6px 2px 0;
+      font-size:11px;
+      color:rgba(255,150,150,.9);
+    }
+    .errorMsg.show{display:block}
+    .modalFoot{display:flex;align-items:center;justify-content:flex-end;padding:14px;border-top:1px solid var(--stroke);gap:10px;flex-wrap:wrap}
     .danger{border-color:rgba(255,120,120,.35);background:rgba(255,120,120,.12)}
     .danger:hover{border-color:rgba(255,120,120,.55);background:rgba(255,120,120,.16)}
 
+    /* Toast notifications */
+    .toastWrap{
+      position:fixed;right:18px;bottom:18px;
+      display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto;min-width:240px;max-width:380px;
+      padding:11px 14px;
+      border:1px solid var(--stroke2);
+      background:rgba(20,22,28,.92);
+      color:var(--text);border-radius:12px;
+      font-size:13px;line-height:1.35;
+      box-shadow:0 18px 40px rgba(0,0,0,.45);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      transform:translateY(8px);opacity:0;
+      transition:opacity .22s ease, transform .22s ease;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.error{border-color:rgba(255,120,120,.45);background:rgba(60,20,24,.92)}
+    .toast.success{border-color:rgba(120,220,160,.35);background:rgba(20,40,30,.92)}
+    .toast .toastMsg{flex:1;min-width:0}
+    .toast .toastAction{
+      border:1px solid var(--stroke2);background:rgba(255,255,255,.06);
+      color:var(--text);padding:5px 10px;border-radius:8px;
+      font-size:12px;cursor:pointer;
+    }
+    .toast .toastAction:hover{background:rgba(255,255,255,.12)}
+
+    /* #3 — shortcuts footer */
+    .shortcutsBar{
+      margin-top:14px;
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+      padding:8px 14px;
+      color:var(--muted2);
+      font-size:11px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.025);
+      border-radius:10px;
+    }
+    .shortcutsBar .sc{display:inline-flex;align-items:center;gap:6px}
+    .shortcutsBar kbd{
+      font-family:var(--font);
+      font-size:10px;font-weight:600;
+      color:var(--text);
+      padding:2px 6px;
+      border:1px solid var(--stroke2);
+      background:rgba(255,255,255,.06);
+      border-radius:5px;
+      line-height:1.4;
+      box-shadow:0 1px 0 rgba(0,0,0,.25);
+    }
+    .shortcutsBar .scSep{opacity:.4}
+
+    /* #4 — drop-sort insertion indicator */
+    .dropIndicator{
+      height:2px;
+      margin:-3px 4px;
+      background:rgba(122,162,255,.85);
+      border-radius:2px;
+      box-shadow:0 0 8px rgba(122,162,255,.6);
+      pointer-events:none;
+    }
+    .card.cardDropOver{outline:2px dashed rgba(122,162,255,.35);outline-offset:-2px}
+
+    /* #5 — mobile responsive */
+    @media (max-width: 760px){
+      .app{margin:14px auto;padding:0 12px 18px}
+      .topbar{
+        padding:12px;
+        gap:10px;
+        position:relative;top:auto;
+      }
+      .topbarFilters{
+        order:2;
+        gap:8px;
+        justify-content:flex-start;
+      }
+      .topbarFilters .field input{width:100%;min-width:0}
+      .topbarFilters .field{flex:1 1 100%}
+      .topbarActions{order:3;justify-self:stretch;justify-content:space-between}
+      .topbarActions .btn{flex:1;justify-content:center}
+      .menuItems{right:0;left:auto}
+      .title input{font-size:19px}
+      .filterRow{padding:8px 10px;gap:8px}
+      .board, .board.nnL{grid-template-columns:1fr;min-height:auto}
+      .col{border-right:none;border-bottom:1px solid var(--stroke)}
+      .col:last-child{border-bottom:none}
+      .col.past{opacity:.75}
+      .dropzone{min-height:auto;padding:6px 6px 10px}
+      .boardHeader{padding:12px}
+      .statusBreakdown{gap:4px}
+      .sbItem{padding:3px 7px;font-size:10px}
+      .modalBody{grid-template-columns:1fr;padding:12px}
+      .shortcutsBar{display:none}
+    }
+
     @media print{
       body{background:#fff;color:#000}
-      .topbar,.boardHeader{display:none !important}
+      .topbar,.boardHeader,.filterRow,.toastWrap{display:none !important}
       .boardWrap{border:none;box-shadow:none;background:transparent}
-      .col{border-color:#ddd}
+      .col{border-color:#ddd;opacity:1 !important;background:transparent !important}
       .card{background:#f7f7f7 !important;color:#111 !important;border-color:#ddd !important;box-shadow:none !important}
       .badge,.tag{border-color:#ddd !important;background:#fff !important;color:#333 !important}
     }
@@ -267,80 +559,129 @@
 <body>
   <div class="app">
     <div class="topbar">
-      <div class="titleWrap">
+      <!-- Cluster 1: title -->
+      <div class="topbarTitle">
         <div class="title">
-          <input id="roadmapName" type="text" value="Roadmap" aria-label="Roadmap Name" />
+          <input id="roadmapName" type="text" value="Roadmap" aria-label="Roadmap Name" maxlength="120" />
         </div>
-        <div id="subtitle" class="subtitle">
-          MVP, offline-first, con vista Quarter e Now/Next/Later, tag filter AND/OR
-        </div>
+        <div id="subtitle" class="subtitle"></div>
       </div>
 
-      <div class="controls">
+      <!-- Cluster 2: filters / view -->
+      <div class="topbarFilters">
         <div class="segmented" role="tablist" aria-label="Vista">
           <button id="btnQuarter" class="active" type="button">Quarter</button>
           <button id="btnNNL" type="button">Now / Next / Later</button>
         </div>
 
-        <select id="yearSelect" class="select" title="Year"></select>
+        <select id="yearSelect" class="select" title="Year" aria-label="Year"></select>
+
+        <select id="statusFilter" class="select" title="Filtra per status" aria-label="Status filter">
+          <option value="">All states</option>
+          <option value="idea">Idea</option>
+          <option value="planned">Planned</option>
+          <option value="in_progress">In progress</option>
+          <option value="done">Done</option>
+        </select>
 
         <div class="field" title="Cerca (Ctrl o Cmd + K)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
             <path d="M16.3 16.3 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          <input id="search" type="text" placeholder="Cerca item..." />
+          <input id="search" type="text" placeholder="Cerca item..." aria-label="Search items" />
         </div>
+      </div>
 
-        <div id="tagBar" class="tagBar" title="Filtra per tag"></div>
+      <!-- Cluster 3: actions -->
+      <div class="topbarActions">
+        <button id="addBtn" class="btn primary" type="button" title="New (N)"><span>+</span><span>New</span></button>
 
-        <button id="addBtn" class="btn primary" type="button"><span>+</span><span>New</span></button>
-        <button id="exportPngBtn" class="btn" type="button">Export PNG</button>
-        <button id="exportPdfBtn" class="btn" type="button">PDF</button>
-        <button id="exportJsonBtn" class="btn" type="button">Export JSON</button>
-
-        <label class="btn" for="importJsonInput">Import JSON</label>
+        <div class="menu" id="exportMenu">
+          <button class="btn" id="exportMenuBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span>Export</span>
+            <span style="opacity:.55;font-size:10px">▾</span>
+          </button>
+          <div class="menuItems" role="menu">
+            <button class="menuItem" id="exportPngBtn" type="button" role="menuitem">Export PNG</button>
+            <button class="menuItem" id="exportPdfBtn" type="button" role="menuitem">Print to PDF</button>
+            <button class="menuItem" id="exportJsonBtn" type="button" role="menuitem">Export JSON</button>
+            <div class="menuDivider"></div>
+            <label class="menuItem" for="importJsonInput" role="menuitem">Import JSON…</label>
+          </div>
+        </div>
         <input id="importJsonInput" type="file" accept="application/json" style="display:none" />
       </div>
     </div>
 
+    <!-- Dedicated filter row -->
+    <div class="filterRow" id="filterRow">
+      <span class="label">Tags</span>
+      <div id="tagBar" class="tagBar" title="Filtra per tag"></div>
+      <button id="clearAllFilters" class="clearBtn" type="button" style="display:none">Clear all</button>
+    </div>
+
     <div class="boardWrap" id="captureArea">
       <div class="boardHeader">
-        <div class="left">
-          <span class="pill" id="viewPill">Quarter</span>
-          <span class="pill" id="countPill">0 item</span>
-          <span class="pill">Drag and drop to move</span>
+        <div>
+          <h2 class="boardTitle">
+            <span id="boardTitleMain">Quarter</span>
+            <span class="accent" id="boardTitleSub">2026</span>
+          </h2>
+          <div class="boardSub" id="boardSub">0 items</div>
         </div>
-        <div class="left">
-          <span class="pill">Saved locally </span>
-        </div>
+        <div id="statusBreakdown" class="statusBreakdown" title="Status breakdown"></div>
       </div>
 
       <div id="board" class="board"></div>
-      <div id="empty" class="empty" style="display:none;">No items. Press a key <b>New</b>.</div>
+      <div id="empty" class="empty" style="display:none;">No items. Press <b>N</b> for New.</div>
+    </div>
+
+    <!-- #3 — visible keyboard shortcuts -->
+    <div class="shortcutsBar" aria-label="Keyboard shortcuts">
+      <span class="sc"><kbd>N</kbd> New item</span>
+      <span class="scSep">·</span>
+      <span class="sc"><kbd>⌘</kbd><kbd>K</kbd> Search</span>
+      <span class="scSep">·</span>
+      <span class="sc"><kbd>⌘</kbd><kbd>⏎</kbd> Save</span>
+      <span class="scSep">·</span>
+      <span class="sc"><kbd>Esc</kbd> Close</span>
+      <span class="scSep">·</span>
+      <span class="sc">Drag cards between or within columns</span>
     </div>
   </div>
 
-  <div id="modalOverlay" class="modalOverlay" role="dialog" aria-modal="true" aria-label="Editor item">
+  <div id="modalOverlay" class="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal">
       <div class="modalHead">
-        <div class="h" id="modalTitle">New item</div>
-        <button class="iconBtn" id="closeModalBtn" type="button" aria-label="Chiudi">✕</button>
+        <div>
+          <div class="h" id="modalTitle">New item</div>
+          <div class="meta" id="modalMeta"></div>
+        </div>
+        <div class="actions">
+          <button class="iconBtn danger" id="deleteBtn" type="button" aria-label="Delete item" title="Delete item" style="display:none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="iconBtn" id="closeModalBtn" type="button" aria-label="Chiudi">✕</button>
+        </div>
       </div>
 
       <div class="modalBody">
         <div class="full">
-          <label class="label">Title</label>
-          <input id="mTitle" class="input" type="text" placeholder="Es. Better onboarding" />
+          <label class="label" for="mTitle">Title <span id="mTitleCount" class="charCount"></span></label>
+          <input id="mTitle" class="input" type="text" placeholder="Es. Better onboarding" maxlength="120" required aria-describedby="mTitleErr" />
+          <div class="errorMsg" id="mTitleErr">Title is required</div>
         </div>
 
         <div class="full">
-          <label class="label">Short description</label>
-          <textarea id="mDesc" class="textarea" placeholder="2-3 righe, utili per stakeholder"></textarea>
+          <label class="label" for="mDesc">Short description <span id="mDescCount" class="charCount"></span></label>
+          <textarea id="mDesc" class="textarea" placeholder="2-3 righe, utili per stakeholder" maxlength="500"></textarea>
         </div>
 
         <div>
-          <label class="label">State</label>
+          <label class="label" for="mStatus">State</label>
           <select id="mStatus" class="select2">
             <option value="idea">Idea</option>
             <option value="planned">Planned</option>
@@ -350,22 +691,23 @@
         </div>
 
         <div>
-          <label class="label">Owner</label>
-          <input id="mOwner" class="input" type="text" placeholder="Es. Team Growth" />
+          <label class="label" for="mOwner">Owner</label>
+          <input id="mOwner" class="input" type="text" placeholder="Es. Team Growth" maxlength="80" />
         </div>
 
         <div class="full">
-          <label class="label">Tag (Comma separated, max 3)</label>
-          <input id="mTags" class="input" type="text" placeholder="Retention, iOS, Data" />
+          <label class="label" for="mTags">Tag (Comma separated, max 3)</label>
+          <input id="mTags" class="input" type="text" placeholder="Retention, iOS, Data" list="tagSuggestions" autocomplete="off" />
+          <datalist id="tagSuggestions"></datalist>
         </div>
 
         <div>
-          <label class="label">Quarter</label>
+          <label class="label" for="mQuarter">Quarter</label>
           <select id="mQuarter" class="select2"></select>
         </div>
 
         <div>
-          <label class="label">Now/Next/Later</label>
+          <label class="label" for="mNNL">Now/Next/Later</label>
           <select id="mNNL" class="select2">
             <option value="now">Now</option>
             <option value="next">Next</option>
@@ -375,24 +717,68 @@
       </div>
 
       <div class="modalFoot">
-        <button id="deleteBtn" class="btn danger" type="button" style="display:none;">Delete</button>
-        <div style="display:flex; gap:10px; margin-left:auto;">
-          <button id="cancelBtn" class="btn" type="button">Null</button>
-          <button id="saveBtn" class="btn primary" type="button">Save</button>
-        </div>
+        <button id="cancelBtn" class="btn" type="button">Cancel</button>
+        <button id="saveBtn" class="btn primary" type="button" title="Save (⌘/Ctrl+Enter)">Save</button>
       </div>
     </div>
   </div>
 
+  <div id="toastWrap" class="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
 
   <script>
-    const LS_KEY  = "roadmap_mvp_final_v1";
-    const LS_VIEW = "roadmap_mvp_last_view";
+    // ---------- Constants ----------
+    const LS_KEY      = "roadmap_v1";
+    const LS_KEY_OLD  = "roadmap_mvp_final_v1";
+    const LS_VIEW     = "roadmap_mvp_last_view";
 
+    const VIEWS = Object.freeze({ QUARTER: "quarter", NNL: "nnl" });
+    const NNL_KEYS = Object.freeze(["now", "next", "later"]);
+    const TAG_MODES = Object.freeze({ AND: "and", OR: "or" });
+    const STATUSES = Object.freeze(["idea", "planned", "in_progress", "done"]);
+
+    const LIMITS = Object.freeze({
+      TITLE: 120, DESC: 500, OWNER: 80, NAME: 120, TAGS: 3, TAG_LEN: 40
+    });
+
+    const SEARCH_SAVE_DEBOUNCE_MS = 250;
+    const UNDO_TOAST_MS = 6000;
+    const TOAST_DEFAULT_MS = 3000;
+
+    // ---------- Generic helpers ----------
     const uid = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
 
-    function safeJsonParse(s, fallback){ try { return JSON.parse(s); } catch { return fallback; } }
+    function safeJsonParse(s, fallback, onError){
+      try { return JSON.parse(s); }
+      catch (err) { if(typeof onError === "function") onError(err); return fallback; }
+    }
+
+    function nowIso(){ return new Date().toISOString(); }
+
+    function relTime(iso){
+      if(!iso) return "";
+      const t = Date.parse(iso);
+      if(!Number.isFinite(t)) return "";
+      const diff = Date.now() - t;
+      const s = Math.round(diff / 1000);
+      if(s < 60)   return `${s}s ago`;
+      const m = Math.round(s / 60);
+      if(m < 60)   return `${m}m ago`;
+      const h = Math.round(m / 60);
+      if(h < 24)   return `${h}h ago`;
+      const d = Math.round(h / 24);
+      if(d < 30)   return `${d}d ago`;
+      return new Date(t).toISOString().slice(0,10);
+    }
+
+    function debounce(fn, ms){
+      let timer = null;
+      return function debounced(...args){
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), ms);
+      };
+    }
 
     function downloadText(filename, text, mime="application/json"){
       const blob = new Blob([text], {type:mime});
@@ -404,7 +790,18 @@
     }
 
     function clampTags(raw){
-      return raw.split(",").map(t => t.trim()).filter(Boolean).slice(0,3);
+      const seen = new Set();
+      return String(raw || "")
+        .split(",")
+        .map(t => t.trim().slice(0, LIMITS.TAG_LEN))
+        .filter(t => {
+          if(!t) return false;
+          const k = t.toLowerCase();
+          if(seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        })
+        .slice(0, LIMITS.TAGS);
     }
 
     function statusLabel(s){
@@ -417,15 +814,68 @@
         .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
 
+    function safeLSSet(key, value){
+      try { localStorage.setItem(key, value); return true; }
+      catch (err) {
+        console.error("localStorage write failed", err);
+        showToast("Salvataggio locale fallito (quota piena o modalità privata?)", "error");
+        return false;
+      }
+    }
+    function safeLSRemove(key){ try { localStorage.removeItem(key); } catch { /* ignore */ } }
+
+    // ---------- Toast ----------
+    function showToast(msg, type = "info", opts = {}){
+      const wrap = document.getElementById("toastWrap");
+      if(!wrap) return null;
+      const t = document.createElement("div");
+      t.className = "toast " + (type === "error" ? "error" : type === "success" ? "success" : "");
+      const msgEl = document.createElement("div");
+      msgEl.className = "toastMsg";
+      msgEl.textContent = msg;
+      t.appendChild(msgEl);
+      if(opts.actionLabel && typeof opts.onAction === "function"){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "toastAction";
+        btn.textContent = opts.actionLabel;
+        btn.addEventListener("click", () => { opts.onAction(); dismiss(); });
+        t.appendChild(btn);
+      }
+      wrap.appendChild(t);
+      requestAnimationFrame(() => t.classList.add("show"));
+      const duration = opts.duration != null ? opts.duration : TOAST_DEFAULT_MS;
+      let timer = setTimeout(dismiss, duration);
+      function dismiss(){
+        clearTimeout(timer);
+        t.classList.remove("show");
+        setTimeout(() => t.remove(), 250);
+      }
+      return { dismiss };
+    }
+
+    // ---------- State ----------
     let state = {
       name: "Roadmap",
       items: [],
       year: new Date().getFullYear(),
-      view: "quarter",     // "quarter" | "nnl"
+      view: VIEWS.QUARTER,
       search: "",
-      tagFilter: [],       // array di tag selezionati
-      tagMode: "and"       // "and" | "or"
+      tagFilter: [],
+      tagMode: TAG_MODES.AND,
+      statusFilter: ""
     };
+
+    // Dynamic subtitle copy (#13). Replaces the old marketing string.
+    function computeSubtitle(){
+      if(state.items.length === 0) return "Press N to add your first item";
+      let latest = null;
+      for(const it of state.items){
+        if(it.updatedAt && (!latest || it.updatedAt > latest)) latest = it.updatedAt;
+      }
+      const count = state.items.length === 1 ? "1 item" : `${state.items.length} items`;
+      return latest ? `${count} · last edit ${relTime(latest)}` : count;
+    }
 
     function defaultQuarterKey(year){
       const month = new Date().getMonth();
@@ -433,82 +883,131 @@
       return `${year}-Q${q}`;
     }
     function quarterOptionsForYear(year){ return [1,2,3,4].map(q => `${year}-Q${q}`); }
-    function quarterTitle(key){ const [y,q]=key.split("-"); return `${q} ${y}`; }
+    function quarterTitle(key){ const [y,q] = key.split("-"); return `${q} ${y}`; }
 
+    function isValidView(v){ return v === VIEWS.QUARTER || v === VIEWS.NNL; }
+    function isValidTagMode(m){ return m === TAG_MODES.AND || m === TAG_MODES.OR; }
+    function isValidStatus(s){ return STATUSES.includes(s); }
+
+    function sanitizeItem(raw, fallbackYear){
+      if(!raw || typeof raw !== "object") return null;
+      const quarter = typeof raw.quarter === "string" && /^\d{4}-Q[1-4]$/.test(raw.quarter)
+        ? raw.quarter : `${fallbackYear}-Q1`;
+      const nnl = NNL_KEYS.includes(raw.nnl) ? raw.nnl : "now";
+      const status = isValidStatus(raw.status) ? raw.status : "planned";
+      const now = nowIso();
+      return {
+        id: typeof raw.id === "string" && raw.id ? raw.id : uid(),
+        title: String(raw.title || "").slice(0, LIMITS.TITLE),
+        desc: String(raw.desc || "").slice(0, LIMITS.DESC),
+        status,
+        owner: String(raw.owner || "").slice(0, LIMITS.OWNER),
+        tags: Array.isArray(raw.tags) ? clampTags(raw.tags.join(",")) : [],
+        quarter, nnl,
+        order: (raw.order && typeof raw.order === "object") ? raw.order : {},
+        createdAt: typeof raw.createdAt === "string" ? raw.createdAt : now,
+        updatedAt: typeof raw.updatedAt === "string" ? raw.updatedAt : now
+      };
+    }
+
+    // ---------- Persistence ----------
     function load(){
-      const saved = safeJsonParse(localStorage.getItem(LS_KEY), null);
+      const newRaw = localStorage.getItem(LS_KEY);
+      const oldRaw = localStorage.getItem(LS_KEY_OLD);
+      if(!newRaw && oldRaw){ safeLSSet(LS_KEY, oldRaw); safeLSRemove(LS_KEY_OLD); }
+
+      const raw = localStorage.getItem(LS_KEY);
+      const saved = safeJsonParse(raw, null, (err) => {
+        console.warn("Roadmap: stored JSON corrupted, ignoring.", err);
+        showToast("Dati locali corrotti, ricomincio da zero", "error", { duration: 5000 });
+      });
       const savedView = localStorage.getItem(LS_VIEW);
 
-      if(saved){
+      if(saved && typeof saved === "object"){
+        const year = Number.isInteger(saved.year) ? saved.year : state.year;
         state = {
           ...state,
-          name: saved.name || state.name,
-          items: Array.isArray(saved.items) ? saved.items : [],
-          year: Number.isFinite(saved.year) ? saved.year : state.year,
-          view: (saved.view === "nnl" || saved.view === "quarter") ? saved.view : state.view,
+          name: typeof saved.name === "string" ? saved.name.slice(0, LIMITS.NAME) : state.name,
+          items: Array.isArray(saved.items)
+            ? saved.items.map(it => sanitizeItem(it, year)).filter(Boolean)
+            : [],
+          year,
+          view: isValidView(saved.view) ? saved.view : state.view,
           search: typeof saved.search === "string" ? saved.search : "",
           tagFilter: Array.isArray(saved.tagFilter) ? saved.tagFilter : [],
-          tagMode: (saved.tagMode === "or" || saved.tagMode === "and") ? saved.tagMode : "and"
+          tagMode: isValidTagMode(saved.tagMode) ? saved.tagMode : TAG_MODES.AND,
+          statusFilter: isValidStatus(saved.statusFilter) ? saved.statusFilter : ""
         };
       }
-      if(savedView === "quarter" || savedView === "nnl") state.view = savedView;
+      if(isValidView(savedView)) state.view = savedView;
     }
 
     function save(){
-      localStorage.setItem(LS_KEY, JSON.stringify({
-        name: state.name,
-        items: state.items,
-        year: state.year,
-        view: state.view,
-        search: state.search,
-        tagFilter: state.tagFilter,
-        tagMode: state.tagMode
+      safeLSSet(LS_KEY, JSON.stringify({
+        name: state.name, items: state.items, year: state.year, view: state.view,
+        search: state.search, tagFilter: state.tagFilter, tagMode: state.tagMode,
+        statusFilter: state.statusFilter
       }));
-      localStorage.setItem(LS_VIEW, state.view);
+      safeLSSet(LS_VIEW, state.view);
     }
 
+    function commitAndRender(){ save(); render(); }
+
+    // ---------- DOM refs ----------
     const el = {
       roadmapName: document.getElementById("roadmapName"),
       subtitle: document.getElementById("subtitle"),
       btnQuarter: document.getElementById("btnQuarter"),
       btnNNL: document.getElementById("btnNNL"),
       yearSelect: document.getElementById("yearSelect"),
+      statusFilter: document.getElementById("statusFilter"),
       search: document.getElementById("search"),
       tagBar: document.getElementById("tagBar"),
+      clearAllFilters: document.getElementById("clearAllFilters"),
       addBtn: document.getElementById("addBtn"),
       board: document.getElementById("board"),
       empty: document.getElementById("empty"),
-      viewPill: document.getElementById("viewPill"),
-      countPill: document.getElementById("countPill"),
+      boardTitleMain: document.getElementById("boardTitleMain"),
+      boardTitleSub: document.getElementById("boardTitleSub"),
+      boardSub: document.getElementById("boardSub"),
+      statusBreakdown: document.getElementById("statusBreakdown"),
       exportJsonBtn: document.getElementById("exportJsonBtn"),
       importJsonInput: document.getElementById("importJsonInput"),
       exportPdfBtn: document.getElementById("exportPdfBtn"),
       exportPngBtn: document.getElementById("exportPngBtn"),
+      exportMenu: document.getElementById("exportMenu"),
+      exportMenuBtn: document.getElementById("exportMenuBtn"),
       captureArea: document.getElementById("captureArea"),
 
       modalOverlay: document.getElementById("modalOverlay"),
       modalTitle: document.getElementById("modalTitle"),
+      modalMeta: document.getElementById("modalMeta"),
       closeModalBtn: document.getElementById("closeModalBtn"),
       cancelBtn: document.getElementById("cancelBtn"),
       saveBtn: document.getElementById("saveBtn"),
       deleteBtn: document.getElementById("deleteBtn"),
       mTitle: document.getElementById("mTitle"),
+      mTitleCount: document.getElementById("mTitleCount"),
+      mTitleErr: document.getElementById("mTitleErr"),
       mDesc: document.getElementById("mDesc"),
+      mDescCount: document.getElementById("mDescCount"),
       mStatus: document.getElementById("mStatus"),
       mOwner: document.getElementById("mOwner"),
       mTags: document.getElementById("mTags"),
+      tagSuggestions: document.getElementById("tagSuggestions"),
       mQuarter: document.getElementById("mQuarter"),
       mNNL: document.getElementById("mNNL"),
     };
 
     let editingId = null;
+    let lastFocusBeforeModal = null;
 
     function syncYearSelect(){
       const current = new Date().getFullYear();
       const years = [current-1, current, current+1, current+2];
       el.yearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
       el.yearSelect.value = String(state.year);
-      el.yearSelect.style.display = (state.view === "quarter") ? "inline-flex" : "none";
+      el.yearSelect.style.display = (state.view === VIEWS.QUARTER) ? "inline-flex" : "none";
     }
 
     function syncQuarterSelectOptions(){
@@ -516,10 +1015,47 @@
       el.mQuarter.innerHTML = opts.map(k => `<option value="${k}">${quarterTitle(k)}</option>`).join("");
     }
 
-    function openModal(item=null){
+    function setTitleError(show){
+      el.mTitle.classList.toggle("error", !!show);
+      el.mTitleErr.classList.toggle("show", !!show);
+      el.mTitle.setAttribute("aria-invalid", show ? "true" : "false");
+    }
+
+    // Populate tag suggestions from all known tags across items (#2)
+    function populateTagSuggestions(){
+      const set = new Set();
+      for(const it of state.items){
+        for(const t of (it.tags || [])){
+          const tag = (t || "").trim();
+          if(tag) set.add(tag);
+        }
+      }
+      el.tagSuggestions.innerHTML = Array.from(set)
+        .sort((a,b) => a.localeCompare(b))
+        .map(t => `<option value="${escapeHtml(t)}"></option>`)
+        .join("");
+    }
+
+    function updateCharCount(input, span, max){
+      if(!input || !span) return;
+      span.textContent = `${input.value.length}/${max}`;
+    }
+
+    // ---------- Export menu ----------
+    function toggleExportMenu(open){
+      const isOpen = el.exportMenu.classList.contains("open");
+      const next = (open === undefined) ? !isOpen : Boolean(open);
+      el.exportMenu.classList.toggle("open", next);
+      el.exportMenuBtn.setAttribute("aria-expanded", String(next));
+    }
+
+    // ---------- Modal ----------
+    function openModal(item = null){
       editingId = item ? item.id : null;
+      lastFocusBeforeModal = document.activeElement;
       el.modalOverlay.style.display = "flex";
       el.modalTitle.textContent = item ? "Edit item" : "New item";
+      el.modalMeta.textContent = item && item.updatedAt ? `Modified ${relTime(item.updatedAt)}` : "";
       el.deleteBtn.style.display = item ? "inline-flex" : "none";
 
       el.mTitle.value = item?.title || "";
@@ -533,39 +1069,57 @@
       el.mNNL.value = item?.nnl || "now";
 
       if(!item){
-        if(state.view === "quarter") el.mQuarter.value = defaultQuarterKey(state.year);
+        if(state.view === VIEWS.QUARTER) el.mQuarter.value = defaultQuarterKey(state.year);
         else el.mNNL.value = "now";
       }
 
-      setTimeout(() => el.mTitle.focus(), 0);
+      updateCharCount(el.mTitle, el.mTitleCount, LIMITS.TITLE);
+      updateCharCount(el.mDesc, el.mDescCount, LIMITS.DESC);
+      setTitleError(false);
+      populateTagSuggestions();
+
+      requestAnimationFrame(() => el.mTitle.focus());
     }
 
     function closeModal(){
       editingId = null;
       el.modalOverlay.style.display = "none";
+      if(lastFocusBeforeModal && typeof lastFocusBeforeModal.focus === "function"){
+        try { lastFocusBeforeModal.focus(); } catch { /* ignore */ }
+      }
+      lastFocusBeforeModal = null;
     }
 
+    function trapModalFocus(e){
+      if(e.key !== "Tab" || el.modalOverlay.style.display !== "flex") return;
+      const focusable = el.modalOverlay.querySelectorAll(
+        'a, button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      const visible = Array.from(focusable).filter(n => n.offsetParent !== null || n === document.activeElement);
+      if(visible.length === 0) return;
+      const first = visible[0];
+      const last  = visible[visible.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+
+    // ---------- Ordering helpers ----------
     function nextOrderForColumn(view, colKey){
       let max = -1;
       for(const it of state.items){
-        const key = (view === "quarter") ? it.quarter : it.nnl;
+        const key = (view === VIEWS.QUARTER) ? it.quarter : it.nnl;
         if(key !== colKey) continue;
         const ord = (it.order && it.order[colKey] != null) ? it.order[colKey] : 0;
         if(ord > max) max = ord;
       }
       return max + 1;
     }
-
-    function getColumnKeyForItem(view, it){
-      return view === "quarter" ? it.quarter : it.nnl;
-    }
-
+    function getColumnKeyForItem(view, it){ return view === VIEWS.QUARTER ? it.quarter : it.nnl; }
     function itemOrderInColumn(it, colKey){
       if(!it.order) return 0;
       const v = it.order[colKey];
       return Number.isFinite(v) ? v : 0;
     }
-
     function normalizeOrders(view, colKey){
       const items = state.items
         .filter(it => getColumnKeyForItem(view, it) === colKey)
@@ -576,101 +1130,104 @@
       });
     }
 
+    // ---------- Modal save/delete ----------
     function upsertItemFromModal(){
-      const title = el.mTitle.value.trim();
-      if(!title){ el.mTitle.focus(); return; }
-
+      const title = el.mTitle.value.trim().slice(0, LIMITS.TITLE);
+      if(!title){ setTitleError(true); el.mTitle.focus(); return; }
+      setTitleError(false);
       const tags = clampTags(el.mTags.value);
       const quarter = el.mQuarter.value;
       const nnl = el.mNNL.value;
+      const now = nowIso();
 
       if(editingId){
         const idx = state.items.findIndex(i => i.id === editingId);
         if(idx >= 0){
           const it = state.items[idx];
           state.items[idx] = {
-            ...it,
-            title,
-            desc: el.mDesc.value.trim(),
+            ...it, title,
+            desc: el.mDesc.value.trim().slice(0, LIMITS.DESC),
             status: el.mStatus.value,
-            owner: el.mOwner.value.trim(),
-            tags,
-            quarter,
-            nnl
+            owner: el.mOwner.value.trim().slice(0, LIMITS.OWNER),
+            tags, quarter, nnl, updatedAt: now
           };
         }
       } else {
-        const id = uid();
         const item = {
-          id,
-          title,
-          desc: el.mDesc.value.trim(),
+          id: uid(), title,
+          desc: el.mDesc.value.trim().slice(0, LIMITS.DESC),
           status: el.mStatus.value,
-          owner: el.mOwner.value.trim(),
-          tags,
-          quarter,
-          nnl,
-          order: {}
+          owner: el.mOwner.value.trim().slice(0, LIMITS.OWNER),
+          tags, quarter, nnl, order: {},
+          createdAt: now, updatedAt: now
         };
-        item.order[quarter] = nextOrderForColumn("quarter", quarter);
-        item.order[nnl] = nextOrderForColumn("nnl", nnl);
-        state.items.unshift(item);
+        item.order[quarter] = nextOrderForColumn(VIEWS.QUARTER, quarter);
+        item.order[nnl]     = nextOrderForColumn(VIEWS.NNL, nnl);
+        state.items.push(item);
       }
-
-      save();
-      render();
+      commitAndRender();
       closeModal();
     }
 
     function deleteEditing(){
       if(!editingId) return;
-      state.items = state.items.filter(i => i.id !== editingId);
-      save();
-      render();
+      const idx = state.items.findIndex(i => i.id === editingId);
+      if(idx < 0){ closeModal(); return; }
+      const removed = state.items[idx];
+      state.items.splice(idx, 1);
+      commitAndRender();
       closeModal();
-    }
 
-    function viewLabel(){
-      return state.view === "quarter" ? "Quarter" : "Now / Next / Later";
-    }
-
-    function colDefs(){
-      if(state.view === "quarter"){
-        const y = state.year;
-        return [1,2,3,4].map(q => ({ key: `${y}-Q${q}`, title: `Q${q} ${y}`, subtitle: "" }));
-      }
-      return [
-        { key:"now", title:"Now", subtitle:"" },
-        { key:"next", title:"Next", subtitle:"" },
-        { key:"later", title:"Later", subtitle:"" }
-      ];
-    }
-
-    // Contatori tag: view + (year se quarter) + search. NO tagFilter.
-    function getBaseScopeItems(){
-      const s = state.search.trim().toLowerCase();
-
-      return state.items.filter(it => {
-        if(state.view === "quarter"){
-          if(typeof it.quarter !== "string") return false;
-          if(!it.quarter.startsWith(String(state.year) + "-")) return false;
-        } else {
-          if(!["now","next","later"].includes(it.nnl)) return false;
+      showToast(`Eliminato "${removed.title || "Untitled"}"`, "info", {
+        actionLabel: "Annulla",
+        duration: UNDO_TOAST_MS,
+        onAction: () => {
+          state.items.splice(Math.min(idx, state.items.length), 0, removed);
+          commitAndRender();
+          showToast("Ripristinato", "success", { duration: 1500 });
         }
-
-        if(!s) return true;
-
-        return (it.title || "").toLowerCase().includes(s) ||
-               (it.desc || "").toLowerCase().includes(s) ||
-               (it.owner || "").toLowerCase().includes(s) ||
-               (it.tags || []).join(" ").toLowerCase().includes(s);
       });
     }
 
+    // ---------- View / column model ----------
+    function colDefs(){
+      if(state.view === VIEWS.QUARTER){
+        const y = state.year;
+        return [1,2,3,4].map(q => ({ key: `${y}-Q${q}`, title: `Q${q}`, subtitle: String(y) }));
+      }
+      return [
+        { key:"now",   title:"Now",   subtitle:"in flight" },
+        { key:"next",  title:"Next",  subtitle:"on deck" },
+        { key:"later", title:"Later", subtitle:"backlog" }
+      ];
+    }
+
+    // ---------- Filtering ----------
+    function itemMatchesScope(it){
+      if(state.view === VIEWS.QUARTER){
+        if(typeof it.quarter !== "string") return false;
+        if(!it.quarter.startsWith(String(state.year) + "-")) return false;
+        return true;
+      }
+      return NNL_KEYS.includes(it.nnl);
+    }
+    function itemMatchesSearch(it, sLower){
+      if(!sLower) return true;
+      return (it.title || "").toLowerCase().includes(sLower) ||
+             (it.desc  || "").toLowerCase().includes(sLower) ||
+             (it.owner || "").toLowerCase().includes(sLower) ||
+             (it.tags  || []).join(" ").toLowerCase().includes(sLower);
+    }
+    function getBaseScopeItems(){
+      const s = state.search.trim().toLowerCase();
+      return state.items.filter(it => itemMatchesScope(it) && itemMatchesSearch(it, s));
+    }
     function computeTagCounts(){
-      const base = getBaseScopeItems();
+      const s = state.search.trim().toLowerCase();
       const counts = new Map();
-      for(const it of base){
+      for(const it of state.items){
+        if(!itemMatchesScope(it)) continue;
+        if(!itemMatchesSearch(it, s)) continue;
         for(const t of (it.tags || [])){
           const tag = (t || "").trim();
           if(!tag) continue;
@@ -684,270 +1241,395 @@
       const idx = state.tagFilter.indexOf(tag);
       if(idx >= 0) state.tagFilter.splice(idx, 1);
       else state.tagFilter.push(tag);
-      save();
-      render();
+      commitAndRender();
     }
-
-    function clearTagFilter(){
-      state.tagFilter = [];
-      save();
-      render();
-    }
-
+    function clearTagFilter(){ state.tagFilter = []; commitAndRender(); }
     function toggleTagMode(){
-      state.tagMode = (state.tagMode === "and") ? "or" : "and";
-      save();
-      render();
+      state.tagMode = (state.tagMode === TAG_MODES.AND) ? TAG_MODES.OR : TAG_MODES.AND;
+      commitAndRender();
+    }
+    function setStatusFilter(v){
+      state.statusFilter = isValidStatus(v) ? v : "";
+      commitAndRender();
+    }
+    function clearAllFilters(){
+      state.tagFilter = [];
+      state.statusFilter = "";
+      state.search = "";
+      commitAndRender();
     }
 
+    // Render the tag/filter row (#2)
     function renderTagBar(){
       const counts = computeTagCounts();
       const tags = Array.from(counts.keys()).sort((a,b) => a.localeCompare(b));
 
       el.tagBar.innerHTML = "";
 
-      // All
-      const all = document.createElement("button");
-      all.type = "button";
-      all.className = "chip" + (state.tagFilter.length === 0 ? " active" : "");
-      all.textContent = "All";
-      all.addEventListener("click", clearTagFilter);
-      el.tagBar.appendChild(all);
+      // Active status chip (dismissible)
+      if(state.statusFilter){
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip statusChip active";
+        chip.title = "Clicca per rimuovere il filtro status";
+        chip.innerHTML = `
+          <span class="dot" style="background:var(--status-${escapeHtml(state.statusFilter)})"></span>
+          <span>${escapeHtml(statusLabel(state.statusFilter))}</span>
+          <span class="x">✕</span>`;
+        chip.addEventListener("click", () => {
+          el.statusFilter.value = "";
+          setStatusFilter("");
+        });
+        el.tagBar.appendChild(chip);
+      }
 
-      if(state.tagFilter.length > 0){
-        const x = document.createElement("button");
-        x.type = "button";
-        x.className = "chip clearX";
-        x.textContent = "✕";
-        x.title = "Remove all tag filters";
-        x.addEventListener("click", clearTagFilter);
-        el.tagBar.appendChild(x);
-
+      // AND/OR mode chip (only when there are 2+ tag filters active)
+      if(state.tagFilter.length >= 2){
         const mode = document.createElement("button");
         mode.type = "button";
-        mode.className = "chip mode";
-        mode.title = "Logica filtri tag (clicca per cambiare)";
+        mode.className = "chip mode active";
+        mode.title = "Tag filter mode: click to switch";
         mode.textContent = state.tagMode.toUpperCase();
         mode.addEventListener("click", toggleTagMode);
         el.tagBar.appendChild(mode);
-
-        const pill = document.createElement("div");
-        pill.className = "chip filterPill";
-        pill.textContent = `Filtri: ${state.tagFilter.join(" + ")} (${state.tagMode.toUpperCase()})`;
-        el.tagBar.appendChild(pill);
       }
 
+      // "All" chip — only when no tag is active
+      if(state.tagFilter.length === 0){
+        const all = document.createElement("span");
+        all.className = "chip active";
+        all.style.cursor = "default";
+        all.textContent = "All";
+        el.tagBar.appendChild(all);
+      }
+
+      // Tag chips
       for(const t of tags){
         const count = counts.get(t) || 0;
+        const isActive = state.tagFilter.includes(t);
         const chip = document.createElement("button");
         chip.type = "button";
-        chip.className = "chip" + (state.tagFilter.includes(t) ? " active" : "");
+        chip.className = "chip" + (isActive ? " active" : "");
         chip.innerHTML = `<span>${escapeHtml(t)}</span><span class="count">${count}</span>`;
         chip.addEventListener("click", () => toggleTagFilter(t));
         el.tagBar.appendChild(chip);
       }
+
+      // Clear-all button
+      const anyFilter = state.tagFilter.length > 0 || state.statusFilter || state.search.trim();
+      el.clearAllFilters.style.display = anyFilter ? "inline-flex" : "none";
     }
 
     function matchesFilters(it){
-      const s = state.search.trim().toLowerCase();
-
-      // scope view + year
-      if(state.view === "quarter"){
-        if(typeof it.quarter !== "string") return false;
-        if(!it.quarter.startsWith(String(state.year) + "-")) return false;
-      } else {
-        if(!["now","next","later"].includes(it.nnl)) return false;
-      }
-
-      // tag filter AND/OR
+      if(!itemMatchesScope(it)) return false;
+      if(state.statusFilter && it.status !== state.statusFilter) return false;
       if(state.tagFilter.length > 0){
         const itemTags = (it.tags || []).map(x => (x || "").toLowerCase());
-        if(state.tagMode === "and"){
-          const ok = state.tagFilter.every(t => itemTags.includes(t.toLowerCase()));
-          if(!ok) return false;
-        } else {
-          const ok = state.tagFilter.some(t => itemTags.includes(t.toLowerCase()));
-          if(!ok) return false;
-        }
+        const selected = state.tagFilter.map(t => t.toLowerCase());
+        const ok = state.tagMode === TAG_MODES.AND
+          ? selected.every(t => itemTags.includes(t))
+          : selected.some(t  => itemTags.includes(t));
+        if(!ok) return false;
       }
-
-      // search
-      if(!s) return true;
-
-      return (it.title || "").toLowerCase().includes(s) ||
-             (it.desc || "").toLowerCase().includes(s) ||
-             (it.owner || "").toLowerCase().includes(s) ||
-             (it.tags || []).join(" ").toLowerCase().includes(s);
+      return itemMatchesSearch(it, state.search.trim().toLowerCase());
     }
 
-    function countVisibleItems(){
-      return state.items.filter(matchesFilters).length;
+    function statusBreakdown(items){
+      const out = { idea:0, planned:0, in_progress:0, done:0 };
+      for(const it of items){ if(out[it.status] != null) out[it.status]++; }
+      return out;
     }
 
+    // ---------- Card rendering ----------
     function renderCard(it){
       const card = document.createElement("div");
       card.className = "card";
       card.draggable = true;
       card.dataset.id = it.id;
+      card.dataset.status = it.status; // #5 — drives left-border color via CSS
+      if(it.updatedAt) card.title = `Modified ${relTime(it.updatedAt)}`;
 
-      const top = document.createElement("div");
-      top.className = "cardTop";
+      const descHtml  = it.desc  ? `<div class="cardDesc">${escapeHtml(it.desc)}</div>` : "";
+      const ownerHtml = it.owner ? `<span class="badge">${escapeHtml(it.owner)}</span>` : "";
+      const tagsHtml  = (it.tags || [])
+        .map(t => `<button type="button" class="tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`)
+        .join("");
 
-      const left = document.createElement("div");
-      left.style.minWidth = "0";
-      left.style.flex = "1";
+      card.innerHTML = `
+        <div class="cardTop">
+          <div class="cardLeft">
+            <div class="cardTitle">${escapeHtml(it.title || "Untitled")}</div>
+            ${descHtml}
+          </div>
+          <div class="cardActions">
+            <span class="dragHandle" aria-hidden="true" title="Drag to move">⋮⋮</span>
+            <button class="iconBtn" type="button" data-action="edit" title="Edit">✎</button>
+          </div>
+        </div>
+        <div class="metaRow">
+          <span class="badge status" data-status="${escapeHtml(it.status)}" title="Filtra per stato">${escapeHtml(statusLabel(it.status))}</span>
+          ${ownerHtml}
+          ${tagsHtml}
+        </div>
+      `;
 
-      const title = document.createElement("div");
-      title.className = "cardTitle";
-      title.textContent = it.title || "Untitled";
-      left.appendChild(title);
-
-      if(it.desc){
-        const desc = document.createElement("div");
-        desc.className = "cardDesc";
-        desc.textContent = it.desc;
-        left.appendChild(desc);
-      }
-
-      const editBtn = document.createElement("button");
-      editBtn.className = "iconBtn";
-      editBtn.type = "button";
-      editBtn.textContent = "✎";
-      editBtn.title = "Edit";
-      editBtn.addEventListener("click", (e) => { e.stopPropagation(); openModal(it); });
-
-      top.appendChild(left);
-      top.appendChild(editBtn);
-      card.appendChild(top);
-
-      const meta = document.createElement("div");
-      meta.className = "metaRow";
-
-      const st = document.createElement("span");
-      st.className = "badge status";
-      st.textContent = statusLabel(it.status);
-      meta.appendChild(st);
-
-      if(it.owner){
-        const ow = document.createElement("span");
-        ow.className = "badge";
-        ow.textContent = it.owner;
-        meta.appendChild(ow);
-      }
-
-      for(const t of (it.tags || [])){
-        const tg = document.createElement("button");
-        tg.type = "button";
-        tg.className = "tag";
-        tg.textContent = t;
-        tg.style.cursor = "pointer";
-        tg.addEventListener("click", (e) => {
+      card.querySelector('[data-action="edit"]').addEventListener("click", (e) => {
+        e.stopPropagation(); openModal(it);
+      });
+      card.querySelectorAll(".tag").forEach(tagBtn => {
+        tagBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          // Qui è la parte critica: toggle, NON replace
-          toggleTagFilter(t);
+          toggleTagFilter(tagBtn.dataset.tag);
         });
-        meta.appendChild(tg);
+      });
+      const statusBadge = card.querySelector(".badge.status");
+      if(statusBadge){
+        statusBadge.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const next = state.statusFilter === it.status ? "" : it.status;
+          el.statusFilter.value = next;
+          setStatusFilter(next);
+        });
       }
-
-      card.appendChild(meta);
       card.addEventListener("click", () => openModal(it));
-
       card.addEventListener("dragstart", (e) => {
         card.classList.add("dragging");
         e.dataTransfer.setData("text/plain", it.id);
         e.dataTransfer.effectAllowed = "move";
       });
-      card.addEventListener("dragend", () => card.classList.remove("dragging"));
+      card.addEventListener("dragend", () => {
+        card.classList.remove("dragging");
+        clearDropState();
+      });
+
+      // #4 — within-column sort: show insertion indicator above/below this card
+      card.addEventListener("dragover", (e) => {
+        if(card.classList.contains("dragging")) return; // don't drop on self
+        e.preventDefault();
+        e.stopPropagation();
+        const rect = card.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        const colEl = card.closest(".col");
+        setDragover(colEl);
+        showDropIndicator(card, before);
+      });
 
       return card;
     }
 
-    function handleDrop(itemId, targetColKey){
-      const idx = state.items.findIndex(i => i.id === itemId);
-      if(idx < 0) return;
+    // ---------- Drag & drop ----------
+    let dragoverColEl = null;
+    let dropTarget = { cardEl: null, before: false };
 
-      const it = state.items[idx];
-      const currentKey = getColumnKeyForItem(state.view, it);
-      if(currentKey === targetColKey) return;
-
-      if(state.view === "quarter"){
-        it.quarter = targetColKey;
-        if(!it.order) it.order = {};
-        it.order[targetColKey] = nextOrderForColumn("quarter", targetColKey);
-        normalizeOrders("quarter", currentKey);
-        normalizeOrders("quarter", targetColKey);
-      } else {
-        it.nnl = targetColKey;
-        if(!it.order) it.order = {};
-        it.order[targetColKey] = nextOrderForColumn("nnl", targetColKey);
-        normalizeOrders("nnl", currentKey);
-        normalizeOrders("nnl", targetColKey);
-      }
-
-      save();
-      render();
+    function setDragover(colEl){
+      if(dragoverColEl && dragoverColEl !== colEl) dragoverColEl.classList.remove("dragover");
+      dragoverColEl = colEl;
+      if(colEl) colEl.classList.add("dragover");
+    }
+    function clearDragover(){
+      if(dragoverColEl) dragoverColEl.classList.remove("dragover");
+      dragoverColEl = null;
     }
 
+    function showDropIndicator(cardEl, before){
+      // Remove any existing indicator first
+      document.querySelectorAll(".dropIndicator").forEach(n => n.remove());
+      if(!cardEl) { dropTarget = { cardEl: null, before: false }; return; }
+      const ind = document.createElement("div");
+      ind.className = "dropIndicator";
+      if(before) cardEl.parentNode.insertBefore(ind, cardEl);
+      else cardEl.parentNode.insertBefore(ind, cardEl.nextSibling);
+      dropTarget = { cardEl, before };
+    }
+    function clearDropState(){
+      document.querySelectorAll(".dropIndicator").forEach(n => n.remove());
+      dropTarget = { cardEl: null, before: false };
+      clearDragover();
+    }
+
+    function handleDrop(itemId, targetColKey, insertIndex){
+      const idx = state.items.findIndex(i => i.id === itemId);
+      if(idx < 0) return;
+      const it = state.items[idx];
+      const currentKey = getColumnKeyForItem(state.view, it);
+
+      // Move item to target column (no-op if same column)
+      if(state.view === VIEWS.QUARTER) it.quarter = targetColKey;
+      else it.nnl = targetColKey;
+      if(!it.order) it.order = {};
+
+      // Compute a new order value so the item lands at `insertIndex`
+      // among the other items in the target column.
+      const others = state.items
+        .filter(o => o.id !== itemId && getColumnKeyForItem(state.view, o) === targetColKey)
+        .sort((a,b) => itemOrderInColumn(a, targetColKey) - itemOrderInColumn(b, targetColKey));
+
+      let newOrder;
+      if(insertIndex == null || insertIndex >= others.length){
+        // Append at end
+        newOrder = others.length
+          ? itemOrderInColumn(others[others.length - 1], targetColKey) + 1
+          : 0;
+      } else if(insertIndex <= 0){
+        // Prepend
+        newOrder = (others.length ? itemOrderInColumn(others[0], targetColKey) : 0) - 1;
+      } else {
+        // Between two items — average their orders, normalize will pack to integers
+        const prev = itemOrderInColumn(others[insertIndex - 1], targetColKey);
+        const next = itemOrderInColumn(others[insertIndex], targetColKey);
+        newOrder = (prev + next) / 2;
+      }
+      it.order[targetColKey] = newOrder;
+
+      normalizeOrders(state.view, targetColKey);
+      if(currentKey !== targetColKey) normalizeOrders(state.view, currentKey);
+
+      it.updatedAt = nowIso();
+      commitAndRender();
+    }
+
+    // ---------- Column-state helpers (#4) ----------
+    // Returns "current" | "past" | "future" for a Quarter view column key
+    function quarterTemporalState(colKey){
+      const currentY = new Date().getFullYear();
+      const currentKey = defaultQuarterKey(currentY);
+      if(colKey === currentKey) return "current";
+      // Compare as strings — "2026-Q1" < "2026-Q3" works lexicographically
+      if(colKey < currentKey) return "past";
+      return "future";
+    }
+    function nnlTemporalState(colKey){
+      if(colKey === "now")  return "current";
+      if(colKey === "next") return "future";
+      return "future"; // "later" — leave un-styled; only Now gets the accent
+    }
+
+    // ---------- Main render ----------
     function render(){
-      el.viewPill.textContent = viewLabel();
-      el.countPill.textContent = `${countVisibleItems()} item`;
+      // Board title (#3)
+      if(state.view === VIEWS.QUARTER){
+        el.boardTitleMain.textContent = "Quarter view";
+        el.boardTitleSub.textContent = String(state.year);
+      } else {
+        el.boardTitleMain.textContent = "Now · Next · Later";
+        el.boardTitleSub.textContent = "";
+      }
+
+      const visible = state.items.filter(matchesFilters);
+      el.boardSub.textContent = visible.length === 1 ? "1 item" : `${visible.length} items`;
+
+      // Status breakdown (#3)
+      const bd = statusBreakdown(visible);
+      el.statusBreakdown.innerHTML = `
+        <div class="sbItem"><span class="dot idea"></span>Idea<span class="sbCount">${bd.idea}</span></div>
+        <div class="sbItem"><span class="dot planned"></span>Planned<span class="sbCount">${bd.planned}</span></div>
+        <div class="sbItem"><span class="dot in_progress"></span>In progress<span class="sbCount">${bd.in_progress}</span></div>
+        <div class="sbItem"><span class="dot done"></span>Done<span class="sbCount">${bd.done}</span></div>
+      `;
+
       syncYearSelect();
       renderTagBar();
 
-      // Subtitle utile: vedi SEMPRE cosa è selezionato
-      const info = state.tagFilter.length
-        ? `Filters: ${state.tagFilter.join(" + ")} (${state.tagMode.toUpperCase()})`
-        : "Filters: none";
-      if(el.subtitle) el.subtitle.textContent = info;
+      // Subtitle: dynamic functional copy (#13)
+      if(el.subtitle) el.subtitle.textContent = computeSubtitle();
 
-      el.btnQuarter.classList.toggle("active", state.view === "quarter");
-      el.btnNNL.classList.toggle("active", state.view === "nnl");
+      if(document.activeElement !== el.search && el.search.value !== state.search){
+        el.search.value = state.search;
+      }
+      if(el.statusFilter.value !== state.statusFilter){
+        el.statusFilter.value = state.statusFilter;
+      }
+
+      el.btnQuarter.classList.toggle("active", state.view === VIEWS.QUARTER);
+      el.btnNNL.classList.toggle("active", state.view === VIEWS.NNL);
 
       const defs = colDefs();
-      el.board.classList.toggle("nnL", state.view === "nnl");
+      el.board.classList.toggle("nnL", state.view === VIEWS.NNL);
       el.board.innerHTML = "";
-
-      const visible = state.items.filter(matchesFilters);
       el.empty.style.display = (visible.length === 0) ? "block" : "none";
+
+      const isCurrentYear = state.year === new Date().getFullYear();
 
       for(const col of defs){
         const colEl = document.createElement("div");
         colEl.className = "col";
         colEl.dataset.colKey = col.key;
 
-        const titleEl = document.createElement("div");
-        titleEl.className = "colTitle";
-        titleEl.innerHTML = `<div>${col.title} <span>${col.subtitle || ""}</span></div><span></span>`;
-        colEl.appendChild(titleEl);
-
-        const zone = document.createElement("div");
-        zone.className = "dropzone";
-        zone.dataset.colKey = col.key;
-
-        zone.addEventListener("dragover", (e) => { e.preventDefault(); colEl.classList.add("dragover"); });
-        zone.addEventListener("dragleave", () => colEl.classList.remove("dragover"));
-        zone.addEventListener("drop", (e) => {
-          e.preventDefault();
-          colEl.classList.remove("dragover");
-          const id = e.dataTransfer.getData("text/plain");
-          handleDrop(id, col.key);
-        });
+        // #4 — column temporal state
+        if(state.view === VIEWS.QUARTER){
+          const ts = quarterTemporalState(col.key);
+          if(ts === "current" && isCurrentYear) colEl.classList.add("current");
+          else if(ts === "past" || (ts === "future" && !isCurrentYear && state.year < new Date().getFullYear())){
+            // Past column (either same year before current quarter, or any column in a past year)
+            colEl.classList.add("past");
+          } else if(!isCurrentYear && state.year < new Date().getFullYear()){
+            colEl.classList.add("past");
+          }
+          // Note: future quarters / future years stay un-styled (no .past, no .current)
+        } else {
+          // NNL: highlight Now as "current"
+          const ts = nnlTemporalState(col.key);
+          if(ts === "current") colEl.classList.add("current");
+        }
 
         const itemsInCol = visible
           .filter(it => getColumnKeyForItem(state.view, it) === col.key)
           .sort((a,b) => itemOrderInColumn(a, col.key) - itemOrderInColumn(b, col.key));
 
-        for(const it of itemsInCol) zone.appendChild(renderCard(it));
+        const titleEl = document.createElement("div");
+        titleEl.className = "colTitle";
+        titleEl.innerHTML = `
+          <div class="colName">
+            <span>${escapeHtml(col.title)}</span>
+            ${col.subtitle ? `<span class="colNote">${escapeHtml(col.subtitle)}</span>` : ""}
+          </div>
+          <span class="colCount">${itemsInCol.length}</span>
+        `;
+        colEl.appendChild(titleEl);
+
+        const zone = document.createElement("div");
+        zone.className = "dropzone";
+        zone.dataset.colKey = col.key;
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          setDragover(colEl);
+          // Only show "append" state when we are not on a card
+          const onCard = e.target && e.target.closest && e.target.closest(".card");
+          if(!onCard) showDropIndicator(null);
+        });
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const id = e.dataTransfer.getData("text/plain");
+          if(!id){ clearDropState(); return; }
+
+          // Compute insertion index from current dropTarget (set by card-level dragover)
+          let insertIndex = null;
+          if(dropTarget.cardEl){
+            const targetId = dropTarget.cardEl.dataset.id;
+            const others = state.items
+              .filter(o => o.id !== id && getColumnKeyForItem(state.view, o) === col.key)
+              .sort((a,b) => itemOrderInColumn(a, col.key) - itemOrderInColumn(b, col.key));
+            const tIdx = others.findIndex(o => o.id === targetId);
+            if(tIdx >= 0) insertIndex = dropTarget.before ? tIdx : tIdx + 1;
+          }
+          clearDropState();
+          handleDrop(id, col.key, insertIndex);
+        });
+
+        if(itemsInCol.length === 0){
+          const ph = document.createElement("div");
+          ph.className = "dropEmpty";
+          ph.textContent = "Drop items here";
+          zone.appendChild(ph);
+        } else {
+          for(const it of itemsInCol) zone.appendChild(renderCard(it));
+        }
         colEl.appendChild(zone);
         el.board.appendChild(colEl);
-
-        titleEl.lastElementChild.textContent = `${itemsInCol.length}`;
-        titleEl.lastElementChild.style.color = "rgba(255,255,255,.45)";
-        titleEl.lastElementChild.style.fontWeight = "600";
-        titleEl.lastElementChild.style.fontSize = "12px";
       }
     }
 
+    // ---------- Import / Export ----------
     function exportJSON(){
       const payload = { ...state };
       const stamp = new Date().toISOString().slice(0,19).replace(/:/g,"-");
@@ -959,130 +1641,169 @@
       reader.onload = () => {
         const data = safeJsonParse(reader.result, null);
         if(!data || !Array.isArray(data.items)){
-          alert("JSON non valido. Serve un file esportato da questa app.");
+          showToast("JSON non valido. Serve un file esportato da questa app.", "error");
           return;
         }
+        const currentCount = state.items.length;
+        const incomingCount = data.items.length;
+        const ok = currentCount === 0 ? true
+          : confirm(`Sostituire i ${currentCount} item attuali con i ${incomingCount} del file?`);
+        if(!ok) return;
+        const year = Number.isInteger(data.year) ? data.year : state.year;
         state = {
           ...state,
-          name: data.name || state.name,
-          year: Number.isFinite(data.year) ? data.year : state.year,
-          view: (data.view === "nnl" || data.view === "quarter") ? data.view : state.view,
-          items: data.items,
+          name: typeof data.name === "string" ? data.name.slice(0, LIMITS.NAME) : state.name,
+          year,
+          view: isValidView(data.view) ? data.view : state.view,
+          items: data.items.map(it => sanitizeItem(it, year)).filter(Boolean),
           search: typeof data.search === "string" ? data.search : "",
           tagFilter: Array.isArray(data.tagFilter) ? data.tagFilter : [],
-          tagMode: (data.tagMode === "or" || data.tagMode === "and") ? data.tagMode : "and"
+          tagMode: isValidTagMode(data.tagMode) ? data.tagMode : TAG_MODES.AND,
+          statusFilter: isValidStatus(data.statusFilter) ? data.statusFilter : ""
         };
         save();
         el.roadmapName.value = state.name;
         el.search.value = state.search;
         render();
+        showToast(`Import completato (${state.items.length} item)`, "success");
       };
       reader.readAsText(file);
     }
 
-	async function exportPNG(){
-	  if(typeof html2canvas !== "function"){
-	    alert("Export PNG richiede html2canvas.");
-	    return;
-	  }
-
-	  const el = document.getElementById("captureArea");
-
-	  // FIX: background temporaneo solido
-	  const prevBg = el.style.background;
-	  el.style.background = "#0b0c10";
-
-	  const canvas = await html2canvas(el, {
-	    backgroundColor: "#0b0c10",
-	    scale: 2,
-	    useCORS: true
-	  });
-
-	  el.style.background = prevBg;
-
-	  const dataUrl = canvas.toDataURL("image/png");
-	  const a = document.createElement("a");
-	  const stamp = new Date().toISOString().slice(0,19).replace(/:/g,"-");
-	  a.download = `roadmap-${state.view}-${stamp}.png`;
-	  a.href = dataUrl;
-	  document.body.appendChild(a);
-	  a.click();
-	  a.remove();
-	}
-	
-    function setView(v){
-      state.view = v;
-      localStorage.setItem(LS_VIEW, v);
-      save();
-      syncYearSelect();
-      render();
+    async function exportPNG(){
+      if(typeof html2canvas !== "function"){
+        showToast("Export PNG richiede html2canvas.", "error");
+        return;
+      }
+      const captureEl = document.getElementById("captureArea");
+      const bg = getComputedStyle(document.documentElement)
+        .getPropertyValue("--bg").trim() || "#0b0c10";
+      const prevBg = captureEl.style.background;
+      const menuBtn = el.exportMenuBtn;
+      const origMenuHtml = menuBtn.innerHTML;
+      captureEl.style.background = bg;
+      // #12c — loading state visible on the topbar's Export button
+      menuBtn.disabled = true;
+      menuBtn.innerHTML = '<span>Exporting…</span>';
+      try {
+        const canvas = await html2canvas(captureEl, { backgroundColor: bg, scale: 2, useCORS: true });
+        const dataUrl = canvas.toDataURL("image/png");
+        const a = document.createElement("a");
+        const stamp = new Date().toISOString().slice(0,19).replace(/:/g,"-");
+        a.download = `roadmap-${state.view}-${stamp}.png`;
+        a.href = dataUrl;
+        document.body.appendChild(a); a.click(); a.remove();
+      } catch (err) {
+        console.error("Export PNG failed", err);
+        showToast("Export PNG fallito", "error");
+      } finally {
+        captureEl.style.background = prevBg;
+        menuBtn.disabled = false;
+        menuBtn.innerHTML = origMenuHtml;
+      }
     }
 
-    function setYear(y){
-      state.year = y;
-      save();
-      syncQuarterSelectOptions();
-      render();
-    }
+    // ---------- View / year setters ----------
+    function setView(v){ state.view = v; save(); syncYearSelect(); render(); }
+    function setYear(y){ state.year = y; save(); syncQuarterSelectOptions(); render(); }
 
-    // Wiring UI
-    el.btnQuarter.addEventListener("click", () => setView("quarter"));
-    el.btnNNL.addEventListener("click", () => setView("nnl"));
+    // ---------- Wiring ----------
+    el.btnQuarter.addEventListener("click", () => setView(VIEWS.QUARTER));
+    el.btnNNL.addEventListener("click", () => setView(VIEWS.NNL));
 
     el.yearSelect.addEventListener("change", () => {
-      const y = parseInt(el.yearSelect.value, 10);
-      if(Number.isFinite(y)) setYear(y);
+      const y = Number(el.yearSelect.value);
+      if(Number.isInteger(y)) setYear(y);
     });
 
+    el.statusFilter.addEventListener("change", () => setStatusFilter(el.statusFilter.value));
+
+    const debouncedSave = debounce(save, SEARCH_SAVE_DEBOUNCE_MS);
     el.search.addEventListener("input", () => {
       state.search = el.search.value;
-      save();
       render();
+      debouncedSave();
     });
 
     el.roadmapName.addEventListener("input", () => {
-      state.name = el.roadmapName.value.trim() || "Roadmap";
-      save();
+      state.name = (el.roadmapName.value.trim() || "Roadmap").slice(0, LIMITS.NAME);
+      debouncedSave();
     });
 
     el.addBtn.addEventListener("click", () => openModal(null));
-    el.exportJsonBtn.addEventListener("click", exportJSON);
+    el.exportJsonBtn.addEventListener("click", () => { exportJSON(); toggleExportMenu(false); });
+    el.exportPdfBtn.addEventListener("click", () => { toggleExportMenu(false); window.print(); });
+    el.exportPngBtn.addEventListener("click", () => { toggleExportMenu(false); exportPNG(); });
     el.importJsonInput.addEventListener("change", (e) => {
       const f = e.target.files && e.target.files[0];
       if(f) importJSON(f);
       e.target.value = "";
+      toggleExportMenu(false);
     });
+    el.clearAllFilters.addEventListener("click", clearAllFilters);
 
-    el.exportPdfBtn.addEventListener("click", () => window.print());
-    el.exportPngBtn.addEventListener("click", exportPNG);
+    // Export menu open/close
+    el.exportMenuBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleExportMenu(); });
+    document.addEventListener("click", (e) => {
+      if(!el.exportMenu.contains(e.target)) toggleExportMenu(false);
+    });
 
     el.closeModalBtn.addEventListener("click", closeModal);
     el.cancelBtn.addEventListener("click", closeModal);
     el.saveBtn.addEventListener("click", upsertItemFromModal);
     el.deleteBtn.addEventListener("click", deleteEditing);
-    el.modalOverlay.addEventListener("click", (e) => { if(e.target === el.modalOverlay) closeModal(); });
-
-    window.addEventListener("keydown", (e) => {
-      if(e.key === "Escape" && el.modalOverlay.style.display === "flex") closeModal();
-      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); el.search.focus(); }
+    el.modalOverlay.addEventListener("click", (e) => {
+      if(e.target === el.modalOverlay) closeModal();
     });
 
-    // Boot
+    el.mTitle.addEventListener("input", () => {
+      updateCharCount(el.mTitle, el.mTitleCount, LIMITS.TITLE);
+      if(el.mTitle.value.trim()) setTitleError(false);
+    });
+    el.mDesc.addEventListener("input",  () => updateCharCount(el.mDesc,  el.mDescCount,  LIMITS.DESC));
+
+    window.addEventListener("keydown", (e) => {
+      const modalOpen = el.modalOverlay.style.display === "flex";
+      if(modalOpen) trapModalFocus(e);
+      if(e.key === "Escape"){
+        if(modalOpen){ closeModal(); return; }
+        if(el.exportMenu.classList.contains("open")){ toggleExportMenu(false); return; }
+      }
+      if(modalOpen && (e.ctrlKey || e.metaKey) && e.key === "Enter"){
+        e.preventDefault(); upsertItemFromModal(); return;
+      }
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){
+        e.preventDefault(); el.search.focus(); return;
+      }
+      const tag = (e.target && e.target.tagName) || "";
+      const typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target?.isContentEditable;
+      if(!modalOpen && !typing && (e.key === "n" || e.key === "N") && !e.ctrlKey && !e.metaKey && !e.altKey){
+        e.preventDefault(); openModal(null);
+      }
+    });
+
+    document.addEventListener("dragend", clearDropState);
+    document.addEventListener("drop", clearDropState);
+
+    // ---------- Boot ----------
     load();
     el.roadmapName.value = state.name;
     el.search.value = state.search;
-
+    el.statusFilter.value = state.statusFilter;
     syncYearSelect();
     syncQuarterSelectOptions();
 
-    // Seed demo
     if(state.items.length === 0){
       const y = state.year;
+      const now = nowIso();
       const seed = [
         { title:"Onboarding più veloce", desc:"Ridurre time-to-value e drop-off nei primi 3 giorni.", status:"planned", owner:"Growth", tags:["Retention","UX"], quarter:`${y}-Q1`, nnl:"now" },
         { title:"Tracking eventi pulito", desc:"Event taxonomy e dashboard base per decisioni rapide.", status:"idea", owner:"Data", tags:["Analytics","Retention"], quarter:`${y}-Q2`, nnl:"next" },
-        { title:"Performance mobile", desc:"Ridurre TTI e migliorare fluidità delle schermate chiave.", status:"planned", owner:"Mobile", tags:["iOS","Android"], quarter:`${y}-Q3`, nnl:"later" },
-      ].map((s, i) => ({ id: uid(), ...s, order: { [s.quarter]: i, [s.nnl]: i } }));
+        { title:"Performance mobile", desc:"Ridurre TTI e migliorare fluidità delle schermate chiave.", status:"in_progress", owner:"Mobile", tags:["iOS","Android"], quarter:`${y}-Q3`, nnl:"later" },
+      ].map((s, i) => ({
+        id: uid(), ...s, order: { [s.quarter]: i, [s.nnl]: i },
+        createdAt: now, updatedAt: now
+      }));
       state.items = seed;
       save();
     }

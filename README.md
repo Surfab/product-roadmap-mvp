@@ -1,6 +1,6 @@
 # Product Roadmap
 
-[🇬🇧 English version](README.en.md)
+🇮🇹 Italiano · [🇬🇧 English](README.en.md)
 
 App offline-first per gestire una roadmap di prodotto, in un unico file HTML. Niente build step, niente backend, niente dipendenze NPM. Apri e usa.
 

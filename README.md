@@ -2,7 +2,7 @@
 
 App offline-first per gestire una roadmap di prodotto, in un unico file HTML. Niente build step, niente backend, niente dipendenze NPM. Apri e usa.
 
-![Screenshot](screenshots/gui-v4-final.png)
+<img width="2238" height="2108" alt="Screenshot 21" src="https://github.com/user-attachments/assets/be4f707f-7245-4350-b58f-8e4e208ec3b8" />
 
 ---
 

@@ -91,6 +91,8 @@
       display:flex;align-items:center;gap:8px;
       justify-self:end;
     }
+    .langToggle button{padding:6px 9px;font-size:11px;font-weight:650;letter-spacing:.4px;color:var(--muted2)}
+    .langToggle button.active{background:rgba(255,255,255,.12);color:var(--text)}
 
     .segmented{
       display:flex;align-items:center;
@@ -569,45 +571,49 @@
 
       <!-- Cluster 2: filters / view -->
       <div class="topbarFilters">
-        <div class="segmented" role="tablist" aria-label="Vista">
-          <button id="btnQuarter" class="active" type="button">Quarter</button>
-          <button id="btnNNL" type="button">Now / Next / Later</button>
+        <div class="segmented" role="tablist" aria-label="View">
+          <button id="btnQuarter" class="active" type="button" data-i18n="nav.quarter">Quarter</button>
+          <button id="btnNNL" type="button" data-i18n="nav.nnl">Now / Next / Later</button>
         </div>
 
         <select id="yearSelect" class="select" title="Year" aria-label="Year"></select>
 
-        <select id="statusFilter" class="select" title="Filtra per status" aria-label="Status filter">
-          <option value="">All states</option>
-          <option value="idea">Idea</option>
-          <option value="planned">Planned</option>
-          <option value="in_progress">In progress</option>
-          <option value="done">Done</option>
+        <select id="statusFilter" class="select" data-i18n-title="filter.statusTitle" title="Filter by status" aria-label="Status filter">
+          <option value="" data-i18n="filter.allStates">All states</option>
+          <option value="idea" data-i18n="status.idea">Idea</option>
+          <option value="planned" data-i18n="status.planned">Planned</option>
+          <option value="in_progress" data-i18n="status.in_progress">In progress</option>
+          <option value="done" data-i18n="status.done">Done</option>
         </select>
 
-        <div class="field" title="Cerca (Ctrl o Cmd + K)">
+        <div class="field" data-i18n-title="search.title" title="Search (Ctrl or Cmd + K)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
             <path d="M16.3 16.3 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          <input id="search" type="text" placeholder="Cerca item..." aria-label="Search items" />
+          <input id="search" type="text" data-i18n-ph="search.placeholder" placeholder="Search items..." aria-label="Search items" />
         </div>
       </div>
 
       <!-- Cluster 3: actions -->
       <div class="topbarActions">
-        <button id="addBtn" class="btn primary" type="button" title="New (N)"><span>+</span><span>New</span></button>
+        <div class="segmented langToggle" role="group" aria-label="Language">
+          <button id="langIt" type="button">IT</button>
+          <button id="langEn" type="button">EN</button>
+        </div>
+        <button id="addBtn" class="btn primary" type="button" data-i18n-title="action.newTitle" title="New (N)"><span>+</span><span data-i18n="action.new">New</span></button>
 
         <div class="menu" id="exportMenu">
           <button class="btn" id="exportMenuBtn" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span>Export</span>
+            <span data-i18n="action.export">Export</span>
             <span style="opacity:.55;font-size:10px">▾</span>
           </button>
           <div class="menuItems" role="menu">
-            <button class="menuItem" id="exportPngBtn" type="button" role="menuitem">Export PNG</button>
-            <button class="menuItem" id="exportPdfBtn" type="button" role="menuitem">Print to PDF</button>
-            <button class="menuItem" id="exportJsonBtn" type="button" role="menuitem">Export JSON</button>
+            <button class="menuItem" id="exportPngBtn" type="button" role="menuitem" data-i18n="action.exportPng">Export PNG</button>
+            <button class="menuItem" id="exportPdfBtn" type="button" role="menuitem" data-i18n="action.printPdf">Print to PDF</button>
+            <button class="menuItem" id="exportJsonBtn" type="button" role="menuitem" data-i18n="action.exportJson">Export JSON</button>
             <div class="menuDivider"></div>
-            <label class="menuItem" for="importJsonInput" role="menuitem">Import JSON…</label>
+            <label class="menuItem" for="importJsonInput" role="menuitem" data-i18n="action.importJson">Import JSON…</label>
           </div>
         </div>
         <input id="importJsonInput" type="file" accept="application/json" style="display:none" />
@@ -616,9 +622,9 @@
 
     <!-- Dedicated filter row -->
     <div class="filterRow" id="filterRow">
-      <span class="label">Tags</span>
-      <div id="tagBar" class="tagBar" title="Filtra per tag"></div>
-      <button id="clearAllFilters" class="clearBtn" type="button" style="display:none">Clear all</button>
+      <span class="label" data-i18n="filter.tags">Tags</span>
+      <div id="tagBar" class="tagBar" data-i18n-title="filter.tagsTitle" title="Filter by tag"></div>
+      <button id="clearAllFilters" class="clearBtn" type="button" data-i18n="filter.clearAll" style="display:none">Clear all</button>
     </div>
 
     <div class="boardWrap" id="captureArea">
@@ -634,20 +640,20 @@
       </div>
 
       <div id="board" class="board"></div>
-      <div id="empty" class="empty" style="display:none;">No items. Press <b>N</b> for New.</div>
+      <div id="empty" class="empty" style="display:none;" data-i18n-html="board.empty">No items. Press <b>N</b> for New.</div>
     </div>
 
     <!-- #3 — visible keyboard shortcuts -->
     <div class="shortcutsBar" aria-label="Keyboard shortcuts">
-      <span class="sc"><kbd>N</kbd> New item</span>
+      <span class="sc"><kbd>N</kbd> <span data-i18n="sc.new">New item</span></span>
       <span class="scSep">·</span>
-      <span class="sc"><kbd>⌘</kbd><kbd>K</kbd> Search</span>
+      <span class="sc"><kbd>⌘</kbd><kbd>K</kbd> <span data-i18n="sc.search">Search</span></span>
       <span class="scSep">·</span>
-      <span class="sc"><kbd>⌘</kbd><kbd>⏎</kbd> Save</span>
+      <span class="sc"><kbd>⌘</kbd><kbd>⏎</kbd> <span data-i18n="sc.save">Save</span></span>
       <span class="scSep">·</span>
-      <span class="sc"><kbd>Esc</kbd> Close</span>
+      <span class="sc"><kbd>Esc</kbd> <span data-i18n="sc.close">Close</span></span>
       <span class="scSep">·</span>
-      <span class="sc">Drag cards between or within columns</span>
+      <span class="sc" data-i18n="sc.drag">Drag cards between or within columns</span>
     </div>
   </div>
 
@@ -659,66 +665,66 @@
           <div class="meta" id="modalMeta"></div>
         </div>
         <div class="actions">
-          <button class="iconBtn danger" id="deleteBtn" type="button" aria-label="Delete item" title="Delete item" style="display:none">
+          <button class="iconBtn danger" id="deleteBtn" type="button" aria-label="Delete item" data-i18n-title="modal.delete" title="Delete item" style="display:none">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <button class="iconBtn" id="closeModalBtn" type="button" aria-label="Chiudi">✕</button>
+          <button class="iconBtn" id="closeModalBtn" type="button" data-i18n-aria="modal.close" aria-label="Close">✕</button>
         </div>
       </div>
 
       <div class="modalBody">
         <div class="full">
-          <label class="label" for="mTitle">Title <span id="mTitleCount" class="charCount"></span></label>
-          <input id="mTitle" class="input" type="text" placeholder="Es. Better onboarding" maxlength="120" required aria-describedby="mTitleErr" />
-          <div class="errorMsg" id="mTitleErr">Title is required</div>
+          <label class="label" for="mTitle"><span data-i18n="modal.title">Title</span> <span id="mTitleCount" class="charCount"></span></label>
+          <input id="mTitle" class="input" type="text" data-i18n-ph="modal.titlePh" placeholder="e.g. Better onboarding" maxlength="120" required aria-describedby="mTitleErr" />
+          <div class="errorMsg" id="mTitleErr" data-i18n="modal.titleRequired">Title is required</div>
         </div>
 
         <div class="full">
-          <label class="label" for="mDesc">Short description <span id="mDescCount" class="charCount"></span></label>
-          <textarea id="mDesc" class="textarea" placeholder="2-3 righe, utili per stakeholder" maxlength="500"></textarea>
+          <label class="label" for="mDesc"><span data-i18n="modal.desc">Short description</span> <span id="mDescCount" class="charCount"></span></label>
+          <textarea id="mDesc" class="textarea" data-i18n-ph="modal.descPh" placeholder="2-3 lines, useful for stakeholders" maxlength="500"></textarea>
         </div>
 
         <div>
-          <label class="label" for="mStatus">State</label>
+          <label class="label" for="mStatus" data-i18n="modal.state">State</label>
           <select id="mStatus" class="select2">
-            <option value="idea">Idea</option>
-            <option value="planned">Planned</option>
-            <option value="in_progress">In progress</option>
-            <option value="done">Done</option>
+            <option value="idea" data-i18n="status.idea">Idea</option>
+            <option value="planned" data-i18n="status.planned">Planned</option>
+            <option value="in_progress" data-i18n="status.in_progress">In progress</option>
+            <option value="done" data-i18n="status.done">Done</option>
           </select>
         </div>
 
         <div>
-          <label class="label" for="mOwner">Owner</label>
-          <input id="mOwner" class="input" type="text" placeholder="Es. Team Growth" maxlength="80" />
+          <label class="label" for="mOwner" data-i18n="modal.owner">Owner</label>
+          <input id="mOwner" class="input" type="text" data-i18n-ph="modal.ownerPh" placeholder="e.g. Team Growth" maxlength="80" />
         </div>
 
         <div class="full">
-          <label class="label" for="mTags">Tag (Comma separated, max 3)</label>
+          <label class="label" for="mTags" data-i18n="modal.tags">Tag (Comma separated, max 3)</label>
           <input id="mTags" class="input" type="text" placeholder="Retention, iOS, Data" list="tagSuggestions" autocomplete="off" />
           <datalist id="tagSuggestions"></datalist>
         </div>
 
         <div>
-          <label class="label" for="mQuarter">Quarter</label>
+          <label class="label" for="mQuarter" data-i18n="modal.quarter">Quarter</label>
           <select id="mQuarter" class="select2"></select>
         </div>
 
         <div>
-          <label class="label" for="mNNL">Now/Next/Later</label>
+          <label class="label" for="mNNL" data-i18n="modal.nnl">Now/Next/Later</label>
           <select id="mNNL" class="select2">
-            <option value="now">Now</option>
-            <option value="next">Next</option>
-            <option value="later">Later</option>
+            <option value="now" data-i18n="nnl.now">Now</option>
+            <option value="next" data-i18n="nnl.next">Next</option>
+            <option value="later" data-i18n="nnl.later">Later</option>
           </select>
         </div>
       </div>
 
       <div class="modalFoot">
-        <button id="cancelBtn" class="btn" type="button">Cancel</button>
-        <button id="saveBtn" class="btn primary" type="button" title="Save (⌘/Ctrl+Enter)">Save</button>
+        <button id="cancelBtn" class="btn" type="button" data-i18n="modal.cancel">Cancel</button>
+        <button id="saveBtn" class="btn primary" type="button" data-i18n-title="modal.saveTitle" title="Save (⌘/Ctrl+Enter)" data-i18n="modal.save">Save</button>
       </div>
     </div>
   </div>
@@ -746,6 +752,213 @@
     const UNDO_TOAST_MS = 6000;
     const TOAST_DEFAULT_MS = 3000;
 
+    // ---------- i18n ----------
+    const LS_LANG = "roadmap_lang";
+    const LANGS = Object.freeze(["it", "en"]);
+
+    const STRINGS = {
+      it: {
+        "nav.quarter": "Quarter",
+        "nav.nnl": "Now / Next / Later",
+        "filter.allStates": "Tutti gli stati",
+        "filter.statusTitle": "Filtra per stato",
+        "filter.tags": "Tag",
+        "filter.tagsTitle": "Filtra per tag",
+        "filter.clearAll": "Pulisci tutto",
+        "status.idea": "Idea",
+        "status.planned": "Pianificato",
+        "status.in_progress": "In corso",
+        "status.done": "Fatto",
+        "search.placeholder": "Cerca item...",
+        "search.title": "Cerca (Ctrl o Cmd + K)",
+        "action.new": "Nuovo",
+        "action.newTitle": "Nuovo (N)",
+        "action.export": "Esporta",
+        "action.exportPng": "Esporta PNG",
+        "action.printPdf": "Stampa in PDF",
+        "action.exportJson": "Esporta JSON",
+        "action.importJson": "Importa JSON…",
+        "board.empty": "Nessun item. Premi <b>N</b> per crearne uno.",
+        "board.titleQuarter": "Vista Quarter",
+        "board.titleNNL": "Now · Next · Later",
+        "board.item1": "1 item",
+        "board.itemN": "{n} item",
+        "sc.new": "Nuovo item",
+        "sc.search": "Cerca",
+        "sc.save": "Salva",
+        "sc.close": "Chiudi",
+        "sc.drag": "Trascina le card tra le colonne o al loro interno",
+        "nnl.now": "Now",
+        "nnl.next": "Next",
+        "nnl.later": "Later",
+        "nnl.now.note": "in corso",
+        "nnl.next.note": "in coda",
+        "nnl.later.note": "backlog",
+        "col.dropHere": "Trascina qui gli item",
+        "modal.newItem": "Nuovo item",
+        "modal.editItem": "Modifica item",
+        "modal.delete": "Elimina item",
+        "modal.close": "Chiudi",
+        "modal.title": "Titolo",
+        "modal.titlePh": "Es. Onboarding migliore",
+        "modal.titleRequired": "Il titolo è obbligatorio",
+        "modal.desc": "Descrizione breve",
+        "modal.descPh": "2-3 righe, utili per gli stakeholder",
+        "modal.state": "Stato",
+        "modal.owner": "Responsabile",
+        "modal.ownerPh": "Es. Team Growth",
+        "modal.tags": "Tag (separati da virgola, max 3)",
+        "modal.quarter": "Quarter",
+        "modal.nnl": "Now/Next/Later",
+        "modal.cancel": "Annulla",
+        "modal.save": "Salva",
+        "modal.saveTitle": "Salva (⌘/Ctrl+Invio)",
+        "modal.modified": "Modificato {t}",
+        "subtitle.empty": "Premi N per aggiungere il primo item",
+        "subtitle.count": "{c} · ultima modifica {t}",
+        "toast.deleted": 'Eliminato "{title}"',
+        "toast.undo": "Annulla",
+        "toast.restored": "Ripristinato",
+        "toast.imported": "Import completato ({n} item)",
+        "toast.invalidJson": "JSON non valido. Serve un file esportato da questa app.",
+        "toast.corrupted": "Dati locali corrotti, ricomincio da zero",
+        "toast.lsFailed": "Salvataggio locale fallito (quota piena o modalità privata?)",
+        "toast.pngMissing": "Export PNG richiede html2canvas.",
+        "toast.pngFailed": "Export PNG fallito",
+        "toast.exporting": "Esportazione…",
+        "confirm.replace": "Sostituire i {current} item attuali con i {incoming} del file?",
+        "time.now": "adesso",
+        "time.s": "{n}s fa",
+        "time.m": "{n}min fa",
+        "time.h": "{n}h fa",
+        "time.d": "{n}g fa"
+      },
+      en: {
+        "nav.quarter": "Quarter",
+        "nav.nnl": "Now / Next / Later",
+        "filter.allStates": "All states",
+        "filter.statusTitle": "Filter by status",
+        "filter.tags": "Tags",
+        "filter.tagsTitle": "Filter by tag",
+        "filter.clearAll": "Clear all",
+        "status.idea": "Idea",
+        "status.planned": "Planned",
+        "status.in_progress": "In progress",
+        "status.done": "Done",
+        "search.placeholder": "Search items...",
+        "search.title": "Search (Ctrl or Cmd + K)",
+        "action.new": "New",
+        "action.newTitle": "New (N)",
+        "action.export": "Export",
+        "action.exportPng": "Export PNG",
+        "action.printPdf": "Print to PDF",
+        "action.exportJson": "Export JSON",
+        "action.importJson": "Import JSON…",
+        "board.empty": "No items. Press <b>N</b> for New.",
+        "board.titleQuarter": "Quarter view",
+        "board.titleNNL": "Now · Next · Later",
+        "board.item1": "1 item",
+        "board.itemN": "{n} items",
+        "sc.new": "New item",
+        "sc.search": "Search",
+        "sc.save": "Save",
+        "sc.close": "Close",
+        "sc.drag": "Drag cards between or within columns",
+        "nnl.now": "Now",
+        "nnl.next": "Next",
+        "nnl.later": "Later",
+        "nnl.now.note": "in flight",
+        "nnl.next.note": "on deck",
+        "nnl.later.note": "backlog",
+        "col.dropHere": "Drop items here",
+        "modal.newItem": "New item",
+        "modal.editItem": "Edit item",
+        "modal.delete": "Delete item",
+        "modal.close": "Close",
+        "modal.title": "Title",
+        "modal.titlePh": "e.g. Better onboarding",
+        "modal.titleRequired": "Title is required",
+        "modal.desc": "Short description",
+        "modal.descPh": "2-3 lines, useful for stakeholders",
+        "modal.state": "State",
+        "modal.owner": "Owner",
+        "modal.ownerPh": "e.g. Team Growth",
+        "modal.tags": "Tag (Comma separated, max 3)",
+        "modal.quarter": "Quarter",
+        "modal.nnl": "Now/Next/Later",
+        "modal.cancel": "Cancel",
+        "modal.save": "Save",
+        "modal.saveTitle": "Save (⌘/Ctrl+Enter)",
+        "modal.modified": "Modified {t}",
+        "subtitle.empty": "Press N to add your first item",
+        "subtitle.count": "{c} · last edit {t}",
+        "toast.deleted": 'Deleted "{title}"',
+        "toast.undo": "Undo",
+        "toast.restored": "Restored",
+        "toast.imported": "Import complete ({n} items)",
+        "toast.invalidJson": "Invalid JSON. You need a file exported from this app.",
+        "toast.corrupted": "Local data corrupted, starting fresh",
+        "toast.lsFailed": "Local save failed (quota full or private mode?)",
+        "toast.pngMissing": "PNG export requires html2canvas.",
+        "toast.pngFailed": "PNG export failed",
+        "toast.exporting": "Exporting…",
+        "confirm.replace": "Replace the {current} current items with the {incoming} from the file?",
+        "time.now": "now",
+        "time.s": "{n}s ago",
+        "time.m": "{n}m ago",
+        "time.h": "{n}h ago",
+        "time.d": "{n}d ago"
+      }
+    };
+
+    let currentLang = "it";
+
+    function isValidLang(l){ return LANGS.includes(l); }
+
+    // t(key, vars?) — translate with {placeholder} interpolation
+    function t(key, vars){
+      const dict = STRINGS[currentLang] || STRINGS.it;
+      let str = (dict[key] != null) ? dict[key] : (STRINGS.en[key] != null ? STRINGS.en[key] : key);
+      if(vars){
+        for(const k in vars){
+          str = str.replaceAll("{" + k + "}", String(vars[k]));
+        }
+      }
+      return str;
+    }
+
+    // Walk all [data-i18n*] nodes and apply the current language
+    function applyStaticI18n(){
+      document.documentElement.lang = currentLang;
+      document.querySelectorAll("[data-i18n]").forEach(node => {
+        node.textContent = t(node.getAttribute("data-i18n"));
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach(node => {
+        node.innerHTML = t(node.getAttribute("data-i18n-html"));
+      });
+      document.querySelectorAll("[data-i18n-ph]").forEach(node => {
+        node.setAttribute("placeholder", t(node.getAttribute("data-i18n-ph")));
+      });
+      document.querySelectorAll("[data-i18n-title]").forEach(node => {
+        node.setAttribute("title", t(node.getAttribute("data-i18n-title")));
+      });
+      document.querySelectorAll("[data-i18n-aria]").forEach(node => {
+        node.setAttribute("aria-label", t(node.getAttribute("data-i18n-aria")));
+      });
+    }
+
+    function setLang(lang){
+      if(!isValidLang(lang)) return;
+      currentLang = lang;
+      safeLSSet(LS_LANG, lang);
+      if(el && el.langIt && el.langEn){
+        el.langIt.classList.toggle("active", lang === "it");
+        el.langEn.classList.toggle("active", lang === "en");
+      }
+      applyStaticI18n();
+      render();
+    }
+
     // ---------- Generic helpers ----------
     const uid = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
 
@@ -758,18 +971,19 @@
 
     function relTime(iso){
       if(!iso) return "";
-      const t = Date.parse(iso);
-      if(!Number.isFinite(t)) return "";
-      const diff = Date.now() - t;
+      const ts = Date.parse(iso);
+      if(!Number.isFinite(ts)) return "";
+      const diff = Date.now() - ts;
       const s = Math.round(diff / 1000);
-      if(s < 60)   return `${s}s ago`;
+      if(s < 5)    return t("time.now");
+      if(s < 60)   return t("time.s", { n: s });
       const m = Math.round(s / 60);
-      if(m < 60)   return `${m}m ago`;
+      if(m < 60)   return t("time.m", { n: m });
       const h = Math.round(m / 60);
-      if(h < 24)   return `${h}h ago`;
+      if(h < 24)   return t("time.h", { n: h });
       const d = Math.round(h / 24);
-      if(d < 30)   return `${d}d ago`;
-      return new Date(t).toISOString().slice(0,10);
+      if(d < 30)   return t("time.d", { n: d });
+      return new Date(ts).toISOString().slice(0,10);
     }
 
     function debounce(fn, ms){
@@ -805,7 +1019,7 @@
     }
 
     function statusLabel(s){
-      return ({idea:"Idea", planned:"Planned", in_progress:"In progress", done:"Done"})[s] || "Planned";
+      return STATUSES.includes(s) ? t("status." + s) : t("status.planned");
     }
 
     function escapeHtml(str){
@@ -818,7 +1032,7 @@
       try { localStorage.setItem(key, value); return true; }
       catch (err) {
         console.error("localStorage write failed", err);
-        showToast("Salvataggio locale fallito (quota piena o modalità privata?)", "error");
+        showToast(t("toast.lsFailed"), "error");
         return false;
       }
     }
@@ -868,13 +1082,13 @@
 
     // Dynamic subtitle copy (#13). Replaces the old marketing string.
     function computeSubtitle(){
-      if(state.items.length === 0) return "Press N to add your first item";
+      if(state.items.length === 0) return t("subtitle.empty");
       let latest = null;
       for(const it of state.items){
         if(it.updatedAt && (!latest || it.updatedAt > latest)) latest = it.updatedAt;
       }
-      const count = state.items.length === 1 ? "1 item" : `${state.items.length} items`;
-      return latest ? `${count} · last edit ${relTime(latest)}` : count;
+      const c = state.items.length === 1 ? t("board.item1") : t("board.itemN", { n: state.items.length });
+      return latest ? t("subtitle.count", { c, t: relTime(latest) }) : c;
     }
 
     function defaultQuarterKey(year){
@@ -919,7 +1133,7 @@
       const raw = localStorage.getItem(LS_KEY);
       const saved = safeJsonParse(raw, null, (err) => {
         console.warn("Roadmap: stored JSON corrupted, ignoring.", err);
-        showToast("Dati locali corrotti, ricomincio da zero", "error", { duration: 5000 });
+        showToast(t("toast.corrupted"), "error", { duration: 5000 });
       });
       const savedView = localStorage.getItem(LS_VIEW);
 
@@ -956,6 +1170,8 @@
     // ---------- DOM refs ----------
     const el = {
       roadmapName: document.getElementById("roadmapName"),
+      langIt: document.getElementById("langIt"),
+      langEn: document.getElementById("langEn"),
       subtitle: document.getElementById("subtitle"),
       btnQuarter: document.getElementById("btnQuarter"),
       btnNNL: document.getElementById("btnNNL"),
@@ -1054,8 +1270,8 @@
       editingId = item ? item.id : null;
       lastFocusBeforeModal = document.activeElement;
       el.modalOverlay.style.display = "flex";
-      el.modalTitle.textContent = item ? "Edit item" : "New item";
-      el.modalMeta.textContent = item && item.updatedAt ? `Modified ${relTime(item.updatedAt)}` : "";
+      el.modalTitle.textContent = item ? t("modal.editItem") : t("modal.newItem");
+      el.modalMeta.textContent = item && item.updatedAt ? t("modal.modified", { t: relTime(item.updatedAt) }) : "";
       el.deleteBtn.style.display = item ? "inline-flex" : "none";
 
       el.mTitle.value = item?.title || "";
@@ -1178,13 +1394,13 @@
       commitAndRender();
       closeModal();
 
-      showToast(`Eliminato "${removed.title || "Untitled"}"`, "info", {
-        actionLabel: "Annulla",
+      showToast(t("toast.deleted", { title: removed.title || "Untitled" }), "info", {
+        actionLabel: t("toast.undo"),
         duration: UNDO_TOAST_MS,
         onAction: () => {
           state.items.splice(Math.min(idx, state.items.length), 0, removed);
           commitAndRender();
-          showToast("Ripristinato", "success", { duration: 1500 });
+          showToast(t("toast.restored"), "success", { duration: 1500 });
         }
       });
     }
@@ -1196,9 +1412,9 @@
         return [1,2,3,4].map(q => ({ key: `${y}-Q${q}`, title: `Q${q}`, subtitle: String(y) }));
       }
       return [
-        { key:"now",   title:"Now",   subtitle:"in flight" },
-        { key:"next",  title:"Next",  subtitle:"on deck" },
-        { key:"later", title:"Later", subtitle:"backlog" }
+        { key:"now",   title:t("nnl.now"),   subtitle:t("nnl.now.note") },
+        { key:"next",  title:t("nnl.next"),  subtitle:t("nnl.next.note") },
+        { key:"later", title:t("nnl.later"), subtitle:t("nnl.later.note") }
       ];
     }
 
@@ -1347,7 +1563,7 @@
       card.draggable = true;
       card.dataset.id = it.id;
       card.dataset.status = it.status; // #5 — drives left-border color via CSS
-      if(it.updatedAt) card.title = `Modified ${relTime(it.updatedAt)}`;
+      if(it.updatedAt) card.title = t("modal.modified", { t: relTime(it.updatedAt) });
 
       const descHtml  = it.desc  ? `<div class="cardDesc">${escapeHtml(it.desc)}</div>` : "";
       const ownerHtml = it.owner ? `<span class="badge">${escapeHtml(it.owner)}</span>` : "";
@@ -1508,23 +1724,23 @@
     function render(){
       // Board title (#3)
       if(state.view === VIEWS.QUARTER){
-        el.boardTitleMain.textContent = "Quarter view";
+        el.boardTitleMain.textContent = t("board.titleQuarter");
         el.boardTitleSub.textContent = String(state.year);
       } else {
-        el.boardTitleMain.textContent = "Now · Next · Later";
+        el.boardTitleMain.textContent = t("board.titleNNL");
         el.boardTitleSub.textContent = "";
       }
 
       const visible = state.items.filter(matchesFilters);
-      el.boardSub.textContent = visible.length === 1 ? "1 item" : `${visible.length} items`;
+      el.boardSub.textContent = visible.length === 1 ? t("board.item1") : t("board.itemN", { n: visible.length });
 
       // Status breakdown (#3)
       const bd = statusBreakdown(visible);
       el.statusBreakdown.innerHTML = `
-        <div class="sbItem"><span class="dot idea"></span>Idea<span class="sbCount">${bd.idea}</span></div>
-        <div class="sbItem"><span class="dot planned"></span>Planned<span class="sbCount">${bd.planned}</span></div>
-        <div class="sbItem"><span class="dot in_progress"></span>In progress<span class="sbCount">${bd.in_progress}</span></div>
-        <div class="sbItem"><span class="dot done"></span>Done<span class="sbCount">${bd.done}</span></div>
+        <div class="sbItem"><span class="dot idea"></span>${escapeHtml(t("status.idea"))}<span class="sbCount">${bd.idea}</span></div>
+        <div class="sbItem"><span class="dot planned"></span>${escapeHtml(t("status.planned"))}<span class="sbCount">${bd.planned}</span></div>
+        <div class="sbItem"><span class="dot in_progress"></span>${escapeHtml(t("status.in_progress"))}<span class="sbCount">${bd.in_progress}</span></div>
+        <div class="sbItem"><span class="dot done"></span>${escapeHtml(t("status.done"))}<span class="sbCount">${bd.done}</span></div>
       `;
 
       syncYearSelect();
@@ -1619,7 +1835,7 @@
         if(itemsInCol.length === 0){
           const ph = document.createElement("div");
           ph.className = "dropEmpty";
-          ph.textContent = "Drop items here";
+          ph.textContent = t("col.dropHere");
           zone.appendChild(ph);
         } else {
           for(const it of itemsInCol) zone.appendChild(renderCard(it));
@@ -1641,13 +1857,13 @@
       reader.onload = () => {
         const data = safeJsonParse(reader.result, null);
         if(!data || !Array.isArray(data.items)){
-          showToast("JSON non valido. Serve un file esportato da questa app.", "error");
+          showToast(t("toast.invalidJson"), "error");
           return;
         }
         const currentCount = state.items.length;
         const incomingCount = data.items.length;
         const ok = currentCount === 0 ? true
-          : confirm(`Sostituire i ${currentCount} item attuali con i ${incomingCount} del file?`);
+          : confirm(t("confirm.replace", { current: currentCount, incoming: incomingCount }));
         if(!ok) return;
         const year = Number.isInteger(data.year) ? data.year : state.year;
         state = {
@@ -1665,14 +1881,14 @@
         el.roadmapName.value = state.name;
         el.search.value = state.search;
         render();
-        showToast(`Import completato (${state.items.length} item)`, "success");
+        showToast(t("toast.imported", { n: state.items.length }), "success");
       };
       reader.readAsText(file);
     }
 
     async function exportPNG(){
       if(typeof html2canvas !== "function"){
-        showToast("Export PNG richiede html2canvas.", "error");
+        showToast(t("toast.pngMissing"), "error");
         return;
       }
       const captureEl = document.getElementById("captureArea");
@@ -1684,7 +1900,7 @@
       captureEl.style.background = bg;
       // #12c — loading state visible on the topbar's Export button
       menuBtn.disabled = true;
-      menuBtn.innerHTML = '<span>Exporting…</span>';
+      menuBtn.innerHTML = `<span>${escapeHtml(t("toast.exporting"))}</span>`;
       try {
         const canvas = await html2canvas(captureEl, { backgroundColor: bg, scale: 2, useCORS: true });
         const dataUrl = canvas.toDataURL("image/png");
@@ -1695,7 +1911,7 @@
         document.body.appendChild(a); a.click(); a.remove();
       } catch (err) {
         console.error("Export PNG failed", err);
-        showToast("Export PNG fallito", "error");
+        showToast(t("toast.pngFailed"), "error");
       } finally {
         captureEl.style.background = prevBg;
         menuBtn.disabled = false;
@@ -1708,6 +1924,8 @@
     function setYear(y){ state.year = y; save(); syncQuarterSelectOptions(); render(); }
 
     // ---------- Wiring ----------
+    el.langIt.addEventListener("click", () => setLang("it"));
+    el.langEn.addEventListener("click", () => setLang("en"));
     el.btnQuarter.addEventListener("click", () => setView(VIEWS.QUARTER));
     el.btnNNL.addEventListener("click", () => setView(VIEWS.NNL));
 
@@ -1786,6 +2004,14 @@
     document.addEventListener("drop", clearDropState);
 
     // ---------- Boot ----------
+    // Resolve language: saved pref → browser → default (it)
+    const savedLang = localStorage.getItem(LS_LANG);
+    if(isValidLang(savedLang)) currentLang = savedLang;
+    else if((navigator.language || "").toLowerCase().startsWith("en")) currentLang = "en";
+    el.langIt.classList.toggle("active", currentLang === "it");
+    el.langEn.classList.toggle("active", currentLang === "en");
+    applyStaticI18n();
+
     load();
     el.roadmapName.value = state.name;
     el.search.value = state.search;

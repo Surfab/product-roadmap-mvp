@@ -1,8 +1,10 @@
 # Product Roadmap
 
+[🇮🇹 Italiano](README.md) · 🇬🇧 English
+
 An offline-first app to manage a product roadmap — a single HTML file. No build step, no backend, no NPM dependencies. Open and use.
 
-<img width="3060" height="3000" alt="Screenshot 21" src="https://github.com/user-attachments/assets/62c4247d-bbb8-4400-bf0f-e06b371196a3" />
+<img width="2238" height="2108" alt="Screenshot 21" src="https://github.com/user-attachments/assets/be4f707f-7245-4350-b58f-8e4e208ec3b8" />
 
 ---
 
@@ -12,6 +14,7 @@ An offline-first app to manage a product roadmap — a single HTML file. No buil
 - **Drag-and-drop** to move items between columns or reorder them within the same column.
 - **Combinable filters**: by tag (AND / OR logic), by status, by free-text search.
 - **Local persistence** via `localStorage` — data survives page refreshes, no cloud required.
+- **Bilingual IT / EN** — toggle in the topbar, persisted choice, auto-detects browser language on first launch.
 - **Import / Export** as JSON, **PNG export** (board snapshot), **PDF print** via the browser's print dialog.
 - **Undo** after deletion (toast with 6 seconds to restore).
 - **Live validation**, char-counter on fields, tag autocomplete based on existing tags.
@@ -51,6 +54,41 @@ Shortcuts are shown in the footer at the bottom of the board.
 
 ---
 
+## 🌐 Language
+
+The interface is available in **Italian** and **English**. Switch language using the `IT / EN` toggle in the top right of the topbar.
+
+- The choice is saved in `localStorage` (key `roadmap_lang`) and persists across sessions.
+- On first launch, if no preference is saved, the app tries to detect the language from the browser (`navigator.language`), falling back to Italian.
+- Only the **chrome** is translated (buttons, labels, menus, toasts, shortcuts). **Item content** (titles, descriptions, owners, tags) stays as you wrote it — it is not translated.
+
+### Adding a language
+
+Strings live in a single `STRINGS` object inside `index.html`:
+
+```js
+const STRINGS = {
+  it: { "action.new": "Nuovo", /* ... */ },
+  en: { "action.new": "New",   /* ... */ }
+};
+```
+
+To add e.g. Spanish: duplicate a block, translate the values, add `"es"` to `LANGS`, and a button to the toggle. The rest (`data-i18n` walk, `t()` helper) already works.
+
+In the markup, static elements are annotated with attributes:
+
+| Attribute | Translates |
+|---|---|
+| `data-i18n` | `textContent` |
+| `data-i18n-html` | `innerHTML` (for strings with markup) |
+| `data-i18n-ph` | `placeholder` |
+| `data-i18n-title` | `title` (tooltip) |
+| `data-i18n-aria` | `aria-label` |
+
+Dynamic strings (toasts, board titles, relative times) go through `t(key, vars)` with `{placeholder}` interpolation.
+
+---
+
 ## 🧩 Data model
 
 Each item has this shape:
@@ -86,6 +124,8 @@ The full state is saved in `localStorage` under the key `roadmap_v1`:
 }
 ```
 
+The language is saved separately under the key `roadmap_lang` (`"it"` | `"en"`).
+
 ### Migration
 
 The app also looks for the old key `roadmap_mvp_final_v1` and migrates it automatically on first load.
@@ -102,6 +142,7 @@ index.html              ~1600 lines
 ├── <body>             static markup: topbar, filter row, board, modal, toast
 └── <script>           all logic in an IIFE-like block
     ├── Constants      LS keys, VIEWS, NNL_KEYS, TAG_MODES, STATUSES, LIMITS
+    ├── i18n           STRINGS (it/en), t(), applyStaticI18n(), setLang()
     ├── Helpers        uid, escape, debounce, safe localStorage wrappers
     ├── State          single mutable object, persisted on every commit
     ├── Filtering      itemMatchesScope + itemMatchesSearch + matchesFilters
@@ -118,6 +159,8 @@ index.html              ~1600 lines
 | `handleDrop(itemId, colKey, insertIndex)` | Drag-drop between/within columns. Computes `(prev + next) / 2` as the new order, then normalises. |
 | `showToast(msg, type, opts)` | Bottom-right notifications. Supports `actionLabel + onAction` for undo. |
 | `computeTagCounts()` | Single-pass over all filtered items. Returns `Map<tag, count>`. |
+| `t(key, vars)` | Translation with `{placeholder}` interpolation. Fallback: current lang → en → key itself. |
+| `applyStaticI18n()` | Walks `[data-i18n*]` nodes and applies the current language to text, placeholder, title, aria-label. |
 
 ### External dependencies
 
@@ -191,6 +234,7 @@ Refactor from a ~1100-line script to ~1600 lines (with +6 features, validation, 
 3. GUI polish phase 1 (3-cluster topbar, dedicated filter row, board header, column distinction, status-as-left-border)
 4. GUI polish phase 2 (typography, density, focus-visible, drag-handle, loading states, dynamic subtitle)
 5. Final features (modal validation, tag autocomplete, shortcuts footer, drag-sort within column, mobile responsive)
+6. Internationalisation (i18n IT/EN with toggle, `STRINGS` + `t()`, language persistence)
 
 ---
 

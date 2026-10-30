@@ -8,6 +8,8 @@
 
 App offline-first per gestire una roadmap di prodotto, in un unico file HTML. Niente build step, niente backend, niente dipendenze NPM. Apri e usa.
 
+**▶ Demo live:** https://surfab.github.io/product-roadmap-mvp/
+
 <img width="2238" height="2108" alt="Screenshot" src="https://github.com/user-attachments/assets/be4f707f-7245-4350-b58f-8e4e208ec3b8" />
 
 ### ✨ Cosa fa
@@ -79,7 +81,7 @@ L'interfaccia è disponibile in **italiano** e **inglese**. Cambi lingua con il 
 **Single-file vanilla JS/HTML/CSS.** Nessun framework, nessun bundler, nessun build step.
 
 ```
-index.html              ~1600 righe
+index.html              ~2100 righe
 ├── <style>            CSS variables + glassmorphism dark theme
 ├── <body>             markup statico: topbar, filter row, board, modal, toast
 └── <script>           tutto il logic in un IIFE-like blocco
@@ -136,6 +138,8 @@ MIT — fai quello che vuoi, niente garanzie.
 ## English
 
 An offline-first app to manage a product roadmap — a single HTML file. No build step, no backend, no NPM dependencies. Open and use.
+
+**▶ Live demo:** https://surfab.github.io/product-roadmap-mvp/
 
 <img width="2238" height="2108" alt="Screenshot" src="https://github.com/user-attachments/assets/be4f707f-7245-4350-b58f-8e4e208ec3b8" />
 
@@ -208,7 +212,7 @@ The interface is available in **Italian** and **English**. Switch with the `IT /
 **Single-file vanilla JS/HTML/CSS.** No framework, no bundler, no build step.
 
 ```
-index.html              ~1600 lines
+index.html              ~2100 lines
 ├── <style>            CSS variables + glassmorphism dark theme
 ├── <body>             static markup: topbar, filter row, board, modal, toast
 └── <script>           all logic in an IIFE-like block
